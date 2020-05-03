@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="xlfunctions-bradbase",
+    name="xlfunctions",
     version="0.0.1b",
     author="Bradley van Ree",
     author_email="brads@bradbase.net",
