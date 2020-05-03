@@ -1,0 +1,8 @@
+*.egg-info
+dist
+build
+
+xlfunctions/__pycache__
+xlfunctions/exceptions/__pycache__
+
+tests/__pycache__
