@@ -19,6 +19,7 @@ from pandas import DataFrame
 # in the FunctionNode code, so adding them here will have no effect.
 
 SUPPORTED_FUNCTIONS = {
+    "ABS":"xAbs.abs",
     "AVERAGE":"Average.average",
     "CHOOSE":"Choose.choose",
     "_XLFN.CONCAT":"Concat.concat",

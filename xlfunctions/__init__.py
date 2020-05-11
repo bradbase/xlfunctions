@@ -3,6 +3,7 @@ name = "xlfunctions"
 from .excel_lib import SUPPORTED_FUNCTIONS
 from .excel_lib import IND_FUN
 
+from .abs import xAbs
 from .average import Average
 from .choose import Choose
 from .concat import Concat
