@@ -11,6 +11,7 @@ Excel occasionally does unusual things while calculating which may not always al
 
 
 # Supported Functions
+  * ABS
   * AVERAGE
   * CHOOSE
   * CONCAT
