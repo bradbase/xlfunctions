@@ -24,8 +24,10 @@ from .round import xRound
 from .sln import SLN
 from .sqrt import Sqrt
 from .sum import xSum
+from .sumif import SumIf
 from .sumproduct import Sumproduct
 from .today import Today
+from .trunc import Trunc
 from .vlookup import VLookup
 from .xnpv import XNPV
 from .yearfrac import Yearfrac

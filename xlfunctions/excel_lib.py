@@ -2,6 +2,7 @@
 from datetime import datetime
 from collections.abc import Iterable
 import itertools
+import re
 
 from pandas import DataFrame
 
@@ -42,8 +43,10 @@ SUPPORTED_FUNCTIONS = {
     "SLN":"SLN.sln",
     "SQRT":"Sqrt.sqrt",
     "SUM":"xSum.xsum",
+    "SUMIF":"SumIf.sumif",
     "SUMPRODUCT":"Sumproduct.sumproduct",
     "TODAY":"Today.today",
+    "TRUNC": "Trunc.trunc",
     "VLOOKUP":"VLookup.vlookup", # need to support shared formulas and XLRange.ncols
     "XNPV":"XNPV.xnpv",
     "YEARFRAC":"Yearfrac.yearfrac",
