@@ -26,6 +26,8 @@ class xSum(BaseFunction):
                     sum_list.append(arg)
 
                 else:
-                    sum_list.append(arg.sum().sum())
+                    sum_list += [item for item in xSum.flatten(arg) if isinstance(item, (int, float))]
 
             return sum(sum_list)
+
+        
