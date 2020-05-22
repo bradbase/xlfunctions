@@ -1,29 +1,32 @@
+import os
 from setuptools import setup, find_packages
 
 
-with open("README.md", "r") as fp:
-    long_description = fp.read()
+def read(*rnames):
+    return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 
 TESTS_REQUIRE = [
     'coverage',
-    'zope.testrunner',
     'flake8',
     'mock',
+    'pytest',
 ]
-
 
 
 setup(
     name="xlfunctions",
-    version="0.0.3b",
+    version="0.1.0dev",
     author="Bradley van Ree",
     author_email="brads@bradbase.net",
     description=(
         "Implemententation of Python equivalents of MS Excel functions."
     ),
-    long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description=(
+        read('README.rst')
+        + '\n\n' +
+        read('CHANGES.rst')
+        ),
     url="https://github.com/bradbase/xlfunctions",
     packages=find_packages(),
     classifiers=[
@@ -33,13 +36,14 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     install_requires=[
-        'dateutil',
         'numpy >= 1.18.1',
         'pandas >= 1.0.1',
         'numpy_financial >= 1.0.0',
+        'python-dateutil',
         'yearfrac',
     ],
     extras_require=dict(

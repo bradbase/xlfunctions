@@ -1,10 +1,13 @@
 [run]
 source =
-    xlfunctions
+    ../xlfunctions
+    */site-packages/xlfunctions
 
 [paths]
 source =
     xlfunctions
+    .
 
-
-
+[report]
+show_missing = true
+precision = 2
