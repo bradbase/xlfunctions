@@ -1,8 +1,10 @@
 *.egg-info
+__pycache__
 dist
 build
+ve
 
-xlfunctions/__pycache__
-xlfunctions/exceptions/__pycache__
+coverage.xml
+.coverage
 
-tests/__pycache__
+.tox
