@@ -2,6 +2,7 @@ from . import xl
 
 
 @xl.register()
+@xl.validate_args
 def CONCAT(*texts):
     """The CONCAT function combines the text from multiple ranges and/or
     strings, but it doesn't provide delimiter or IgnoreEmpty arguments.
@@ -10,15 +11,17 @@ def CONCAT(*texts):
         concat-function-9b1a9a3f-94ff-41af-9736-694cbd6b4ca2
     """
     if len(texts) > 254:
-        return xl.ExcelError(
-            "#VALUE!",
+        return xl.ValueExcelError(
             f"Can't concat more than 254 arguments. Provided: {len(texts)}")
 
-    return ''.join([str(text) for text in xl.flatten(texts)])
+    return ''.join([
+        str(text) for text in texts if xl.is_text(text) or xl.is_number(text)
+    ])
 
 
 @xl.register()
-def MID(text, start_num, num_chars):
+@xl.validate_args
+def MID(text: xl.Text, start_num: xl.Integer, num_chars: xl.Integer):
     """Returns a specific number of characters from a text string, starting
     at the position you specify, based on the number of characters you specify.
 
@@ -28,29 +31,23 @@ def MID(text, start_num, num_chars):
     text = str(text)
 
     if len(text) > xl.CELL_CHARACTER_LIMIT:
-        return xl.ExcelError(
-            "#VALUE!",
+        return xl.ValueExcelError(
             f'Text is too long. Is {len(text)} but needs to '
             f'be {xl.CELL_CHARACTER_LIMIT} or less.')
 
-    if not isinstance(start_num, int):
-        return xl.ExcelError("#VALUE!", f'{start_num} is not an integer')
-
-    if not isinstance(num_chars, int):
-        return xl.ExcelError("#VALUE!", f'{num_chars} is not an integer')
-
     if start_num < 1:
-        return xl.ExcelError("#VALUE!", f'{start_num} is < 1')
+        return xl.NumExcelError(f'{start_num} is < 1')
 
     if num_chars < 0:
-        return xl.ExcelError("#VALUE!", f'{num_chars} is < 0')
+        return xl.NumExcelError(f'{num_chars} is < 0')
 
     start_idx = start_num - 1
     return text[start_idx:start_idx+num_chars]
 
 
 @xl.register()
-def RIGHT(text, num_chars=1):
+@xl.validate_args
+def RIGHT(text: xl.Text, num_chars: xl.Integer = 1):
     """Returns the last character or characters in a text string.
 
     https://support.office.com/en-us/article/

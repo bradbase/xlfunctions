@@ -36,6 +36,7 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     install_requires=[
+        'dateutil',
         'numpy >= 1.18.1',
         'pandas >= 1.0.1',
         'numpy_financial >= 1.0.0',

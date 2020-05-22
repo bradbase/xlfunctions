@@ -1,11 +1,27 @@
 import datetime
+import functools
+import inspect
+import operator
 import pandas
+import re
+import typing
 
 COMPATIBILITY = 'EXCEL'
 EXCEL_EPOCH = datetime.date(1900, 1, 1)
 CELL_CHARACTER_LIMIT = 32767
 
-NUMBER_TYPES = (int, float)
+# Alias to make code more readable.
+RangeData = pandas.DataFrame
+
+INTEGER_TYPES = (int,)
+NUMBER_TYPES = INTEGER_TYPES + (float,)
+RANGE_TYPES = (list, RangeData)
+TEXT_TYPES = (str,)
+
+Integer = typing.Union[INTEGER_TYPES]
+Number = typing.Union[NUMBER_TYPES]
+Range = typing.Union[RANGE_TYPES]
+Text = typing.Union[TEXT_TYPES]
 
 ERROR_CODE_NULL = '#NULL!'
 ERROR_CODE_DIV_ZERO = "#DIV/0!"
@@ -25,6 +41,17 @@ ERROR_CODES = (
     ERROR_CODE_NA,
 )
 
+CRITERIA_REGEX = '(\W*)(.*)'
+
+CRITERIA_OPERATORS = {
+    '<': operator.lt,
+    '<=': operator.le,
+    '=': operator.eq,
+    '<>': operator.ne,
+    '>=': operator.ge,
+    '>': operator.gt,
+}
+
 
 class ExcelError(Exception):
 
@@ -43,32 +70,61 @@ class SpecificExcelError(ExcelError):
         self.info = info
 
 
-class NullError(SpecificExcelError):
+class NullExcelError(SpecificExcelError):
     value = ERROR_CODE_NULL
 
 
-class DivZeroError(SpecificExcelError):
+class DivZeroExcelError(SpecificExcelError):
     value = ERROR_CODE_DIV_ZERO
 
 
-class ValueError(SpecificExcelError):
+class ValueExcelError(SpecificExcelError):
     value = ERROR_CODE_VALUE
 
 
-class RefError(SpecificExcelError):
+class RefExcelError(SpecificExcelError):
     value = ERROR_CODE_REF
 
 
-class NameError(SpecificExcelError):
+class NameExcelError(SpecificExcelError):
     value = ERROR_CODE_NAME
 
 
-class NumError(SpecificExcelError):
+class NumExcelError(SpecificExcelError):
     value = ERROR_CODE_NUM
 
 
-class NaError(SpecificExcelError):
+class NaExcelError(SpecificExcelError):
     value = ERROR_CODE_NA
+
+
+class NumberExcelError(ValueExcelError):
+
+    def __init__(self, value, name='value'):
+        vtype = type(value).__name__
+        super().__init__(
+            f'`{name}` "{value}" must be an int or float. Got: {vtype}')
+
+
+class IntegerExcelError(ValueExcelError):
+
+    def __init__(self, value, name='value'):
+        vtype = type(value).__name__
+        super().__init__(f'`{name}` "{value}" must be an int. Got: {vtype}')
+
+
+class TextExcelError(ValueExcelError):
+
+    def __init__(self, value, name='value'):
+        vtype = type(value).__name__
+        super().__init__(f'`{name}` "{value}" must be text. Got: {vtype}')
+
+
+class RangeExcelError(ValueExcelError):
+
+    def __init__(self, value, name='value'):
+        vtype = type(value).__name__
+        super().__init__(f'`{name}` "{value}" must be a range. Got: {vtype}')
 
 
 class Functions(dict):
@@ -98,14 +154,24 @@ def register(name=None):
     return registerFunction
 
 
+def is_integer(value):
+    """Determines if a value is a number."""
+    return isinstance(value, INTEGER_TYPES)
+
+
 def is_number(value):
     """Determines if a value is a number."""
     return isinstance(value, NUMBER_TYPES)
 
 
+def is_text(value):
+    """Determines if a value is text."""
+    return isinstance(value, TEXT_TYPES)
+
+
 def is_range(value):
     """Determines if a value is a number."""
-    return isinstance(value, (pandas.DataFrame, list))
+    return isinstance(value, RANGE_TYPES)
 
 
 def is_empty(value):
@@ -113,13 +179,103 @@ def is_empty(value):
     return value in [None, '']
 
 
+def is_criteria(value):
+    """Determines whether the value is a proper criteria."""
+    # A criterium could be anything that can present a simple truthy value.
+    return not is_range(value)
+
+
+def is_error(value):
+    """Determines if a value is an Excel error."""
+    return isinstance(value, ExcelError)
+
+
+def convert_integer(value, name):
+    if is_integer(value):
+        return value
+    try:
+        return int(float(value))
+    except ValueError:
+        raise IntegerExcelError(value, name)
+
+
+def convert_number(value, name):
+    if is_number(value):
+        return value
+    for type in NUMBER_TYPES:
+        try:
+            return type(value)
+        except ValueError:
+            pass
+    raise NumberExcelError(value, name)
+
+
+def convert_range(value, name):
+    if not is_range(value):
+        raise RangeExcelError(value, name)
+    return value
+
+
+def convert_text(value, name):
+    try:
+        return str(value)
+    except ValueError:
+        raise TextExcelError(value, name)
+
+
+TYPE_TO_COVERTER = {
+    Integer: convert_integer,
+    Number: convert_number,
+    Range: convert_range,
+    Text: convert_text,
+}
+
+
+def _validate(vtype, val, name):
+    converter = TYPE_TO_COVERTER.get(vtype, None)
+    if converter is not None:
+        return converter(val, name)
+
+    # Support lists with value types
+    if getattr(vtype, '__origin__', None) == list:
+        return [_validate(vtype.__args__[0], item, name) for item in val]
+
+    # Support unions
+    if getattr(vtype, '__origin__', None) == typing.Union:
+        for stype in vtype.__args__:
+            try:
+                return _validate(stype, val, name)
+            except ExcelError:
+                pass
+        raise ValueExcelError(val)
+
+    return val
+
+
+def validate_args(func):
+
+    @functools.wraps(func)
+    def validate(*args, **kw):
+        sig = inspect.signature(func)
+        bound = sig.bind(*args, **kw)
+        for pname, value in list(bound.arguments.items()):
+            try:
+                bound.arguments[pname] = _validate(
+                    sig.parameters[pname].annotation, value, pname)
+            except ExcelError as err:
+                return err
+        return func(*bound.args, **bound.kwargs)
+
+    return validate
+
+
 def flatten(values):
     """Fully recursive flattening."""
     flat = []
-    if isinstance(values, pandas.DataFrame):
+    if isinstance(values, RangeData):
         values = values.values.tolist()
     for value in values:
-        if isinstance(value, pandas.DataFrame):
+        if isinstance(value, RangeData):
             flat.extend(flatten(value.values.tolist()))
         elif isinstance(value, (list, tuple)):
             flat.extend(flatten(value))
@@ -130,3 +286,42 @@ def flatten(values):
 
 def length(values):
     return len(flatten(values))
+
+
+def _convert_str_to_number(value):
+    for ntype in NUMBER_TYPES:
+        try:
+            return ntype(value)
+        except ValueError:
+            pass
+    return value
+
+
+def parse_criteria(criteria):
+
+    if is_number(criteria):
+        def check(x):
+            return x == criteria
+
+    elif type(criteria) == str:
+        search = re.search(CRITERIA_REGEX, criteria.lower()).group
+        str_operator, str_value = search(1), search(2)
+
+        operator = CRITERIA_OPERATORS.get(str_operator)
+        if operator is None:
+            operator = CRITERIA_OPERATORS['=']
+            str_value = criteria
+
+        value = _convert_str_to_number(str_value)
+
+        def check(x):
+            try:
+                return operator(x, value)
+            except TypeError:
+                return False
+
+    else:
+        def check(x):
+            return False
+
+    return check

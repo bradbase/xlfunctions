@@ -1,6 +1,6 @@
 name = "xlfunctions"
 
-from .xl import FUNCTIONS
+from .xl import FUNCTIONS, ExcelError
 
 # Make sure to register all functions
-from . import date, financial, lookup, math, statistical, text
+from . import date, financial, lookup, math, statistics, text

@@ -28,49 +28,49 @@ class SpecificExcelErrorTest(unittest.TestCase):
 class NullExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.NullError('Error')
+        err = xl.NullExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_NULL)
 
 
 class DivZeroExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.DivZeroError('Error')
+        err = xl.DivZeroExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_DIV_ZERO)
 
 
 class ValueExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.ValueError('Error')
+        err = xl.ValueExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_VALUE)
 
 
 class RefExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.RefError('Error')
+        err = xl.RefExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_REF)
 
 
 class NameExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.NameError('Error')
+        err = xl.NameExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_NAME)
 
 
 class NumExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.NumError('Error')
+        err = xl.NumExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_NUM)
 
 
 class NaExcelErrorTest(unittest.TestCase):
 
     def test_error(self):
-        err = xl.NaError('Error')
+        err = xl.NaExcelError('Error')
         self.assertEqual(str(err), xl.ERROR_CODE_NA)
 
 

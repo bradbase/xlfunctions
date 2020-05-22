@@ -1,26 +1,21 @@
-import pandas
-
 from . import xl
 
 
 @xl.register()
-def CHOOSE(index_num, *values):
+@xl.validate_args
+def CHOOSE(index_num: xl.Integer, *values):
     """Uses index_num to return a value from the list of value arguments.
 
     https://support.office.com/en-us/article/
         choose-function-fc5c184f-cb62-4ec7-a46e-38653b98f5bc
     """
-    if isinstance(index_num, str):
-        index_num = int(index_num)
-
     if index_num <= 0 or index_num > 254:
-        return xl.ExcelError(
-            "#VALUE!", f"{index_num} must be between 1 and 254")
+        return xl.ValueExcelError(
+            f"`index_num` {index_num} must be between 1 and 254")
 
     if index_num > len(values):
-        return xl.ExcelError(
-            "#VALUE!",
-            f"{index} must not be larger than the number of "
+        return xl.ValueExcelError(
+            f"`index_num` {index_num} must not be larger than the number of "
             f"values: {len(values)}")
 
     idx = index_num - 1
@@ -28,7 +23,12 @@ def CHOOSE(index_num, *values):
 
 
 @xl.register()
-def VLOOKUP(lookup_value, table_array, col_index_num, range_lookup=False):
+@xl.validate_args
+def VLOOKUP(
+        lookup_value,
+        table_array: xl.Range,
+        col_index_num: xl.Integer,
+        range_lookup=False):
     """Looks in the first column of an array and moves across the row to
     return the value of a cell.
 
@@ -45,6 +45,7 @@ def VLOOKUP(lookup_value, table_array, col_index_num, range_lookup=False):
     table_array = table_array.set_index(0)
 
     if lookup_value not in table_array.index:
-        return xl.NaError('lookup_value not in first column of table_array')
+        return xl.NaExcelError(
+            '`lookup_value` not in first column of `table_array`.')
 
     return table_array.loc[lookup_value].values[0]

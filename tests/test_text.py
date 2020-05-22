@@ -1,0 +1,35 @@
+import unittest
+
+from xlfunctions import xl, text
+
+
+class TextModuleTest(unittest.TestCase):
+
+    def test_CONCAT(self):
+        self.assertEqual(
+            text.CONCAT("SPAM", " ", "SPAM"), 'SPAM SPAM')
+        self.assertEqual(
+            text.CONCAT("SPAM", " ", xl.RangeData([[1, 2]]), 4), 'SPAM 4')
+
+    def test_MID(self):
+        self.assertEqual(text.MID('Romain', 3, 4), 'main')
+        self.assertEqual(text.MID('Romain', 1, 2), 'Ro')
+        self.assertEqual(text.MID('Romain', 3, 6), 'main')
+
+    def test_MID_start_num_converted_to_integer(self):
+        self.assertEqual(text.MID('Romain', 1.1, 2), 'Ro')
+
+    def test_MID_num_chars_converted_to_integer(self):
+        self.assertEqual(text.MID('Romain', 1, 2.1), 'Ro')
+
+    def test_MID_start_num_must_be_superior_or_equal_to_1(self):
+        self.assertIsInstance(text.MID('Romain', 0, 3), xl.NumExcelError)
+
+    def test_MID_num_chars_must_be_positive(self):
+        self.assertIsInstance(text.MID('Romain', 1, -1), xl.NumExcelError)
+
+    def test_RIGHT(self):
+        self.assertEqual(text.RIGHT("Sale Price", 5), "Price")
+        self.assertEqual(text.RIGHT("Stock Number"), "r")
+
+
