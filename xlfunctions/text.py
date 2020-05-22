@@ -53,11 +53,5 @@ def RIGHT(text: xl.Text, num_chars: xl.Integer = 1):
     https://support.office.com/en-us/article/
         right-rightb-functions-240267ee-9afa-4639-a02b-f19e1786cf2f
     """
-    if not isinstance(num_chars, int):
-        return xl.ExcelError(
-            "#VALUE!",
-            f"RIGHT function number of cars must be int, "
-            f"got: {type(num_chars)}")
-
     text = str(text)
     return text[-num_chars:]

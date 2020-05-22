@@ -36,7 +36,7 @@ def COUNT(*values):
     if len(values) > 255:
         return xl.ValueExcelError(
             f"Can only have up to 255 supplimentary arguments. "
-            f"Provided: {len(args)}")
+            f"Provided: {len(values)}")
 
     return len(list(filter(xl.is_number, values)))
 

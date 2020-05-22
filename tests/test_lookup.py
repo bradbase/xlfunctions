@@ -6,12 +6,13 @@ from xlfunctions import xl, lookup
 class LookupModuleTest(unittest.TestCase):
 
     def test_CHOOSE(self):
-        range_00 = xl.RangeData([[1, 2],[3, 4]])
-        range_01 = xl.RangeData([[2, 1],[3, 4]])
-        range_02 = xl.RangeData([[1, 2],[4, 3]])
-        choose_result_00 = lookup.CHOOSE('2', range_00, range_01, range_02)
-        result_00 = xl.RangeData([[2, 1],[3, 4]])
-        self.assertTrue(result_00.equals(choose_result_00))
+        self.assertEqual(lookup.CHOOSE('2', 2, 4, 6), 4)
+
+    def test_CHOOSE_with_negative_index(self):
+        self.assertIsInstance(lookup.CHOOSE(-1, 1, 2, 3), xl.ValueExcelError)
+
+    def test_CHOOSE_with_too_large_index(self):
+        self.assertIsInstance(lookup.CHOOSE(5, 1, 2, 3), xl.ValueExcelError)
 
     def test_VLOOOKUP(self):
         # Excel Doc example.
@@ -24,3 +25,22 @@ class LookupModuleTest(unittest.TestCase):
             [106, 'Sousa', 'Luis'],
         ])
         self.assertEqual(lookup.VLOOKUP(102, range1, 2, False), 'Fortana')
+
+    def test_VLOOOKUP_with_range_lookup(self):
+        with self.assertRaises(NotImplementedError):
+            lookup.VLOOKUP(1, xl.RangeData(), 2, True)
+
+    def test_VLOOOKUP_with_oversized_col_index_num(self):
+        # Excel Doc example.
+        range1 = xl.RangeData([
+            [101, 'Davis', 'Sara'],
+        ])
+        self.assertIsInstance(
+            lookup.VLOOKUP(102, range1, 4, False), xl.ValueExcelError)
+
+    def test_VLOOOKUP_with_unknown_lookup_value(self):
+        range1 = xl.RangeData([
+            [101, 'Davis', 'Sara'],
+        ])
+        self.assertIsInstance(
+            lookup.VLOOKUP(102, range1, 2, False), xl.NaExcelError)

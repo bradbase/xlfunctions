@@ -18,10 +18,10 @@ NUMBER_TYPES = INTEGER_TYPES + (float,)
 RANGE_TYPES = (list, RangeData)
 TEXT_TYPES = (str,)
 
-Integer = typing.Union[INTEGER_TYPES]
-Number = typing.Union[NUMBER_TYPES]
-Range = typing.Union[RANGE_TYPES]
-Text = typing.Union[TEXT_TYPES]
+Integer = typing.NewType('Integer', typing.Union[INTEGER_TYPES])
+Number = typing.NewType('Number', typing.Union[NUMBER_TYPES])
+Range = typing.NewType('Range', typing.Union[RANGE_TYPES])
+Text = typing.NewType('Text', typing.Union[TEXT_TYPES])
 
 ERROR_CODE_NULL = '#NULL!'
 ERROR_CODE_DIV_ZERO = "#DIV/0!"
@@ -58,6 +58,12 @@ class ExcelError(Exception):
     def __init__(self, value, info=None):
         self.value = value
         self.info = info
+
+    def _safe_value_str(self, value):
+        try:
+            return str(value)
+        except:
+            return '<unprintable>'
 
     def __str__(self):
         return self.value
@@ -101,7 +107,9 @@ class NaExcelError(SpecificExcelError):
 class NumberExcelError(ValueExcelError):
 
     def __init__(self, value, name='value'):
+        self.value = value
         vtype = type(value).__name__
+        value = self._safe_value_str(value)
         super().__init__(
             f'`{name}` "{value}" must be an int or float. Got: {vtype}')
 
@@ -109,21 +117,27 @@ class NumberExcelError(ValueExcelError):
 class IntegerExcelError(ValueExcelError):
 
     def __init__(self, value, name='value'):
+        self.value = value
         vtype = type(value).__name__
+        value = self._safe_value_str(value)
         super().__init__(f'`{name}` "{value}" must be an int. Got: {vtype}')
 
 
 class TextExcelError(ValueExcelError):
 
     def __init__(self, value, name='value'):
+        self.value = value
         vtype = type(value).__name__
+        value = self._safe_value_str(value)
         super().__init__(f'`{name}` "{value}" must be text. Got: {vtype}')
 
 
 class RangeExcelError(ValueExcelError):
 
     def __init__(self, value, name='value'):
+        self.value = value
         vtype = type(value).__name__
+        value = self._safe_value_str(value)
         super().__init__(f'`{name}` "{value}" must be a range. Got: {vtype}')
 
 
@@ -190,36 +204,36 @@ def is_error(value):
     return isinstance(value, ExcelError)
 
 
-def convert_integer(value, name):
+def convert_integer(value, name=None):
     if is_integer(value):
         return value
     try:
         return int(float(value))
-    except ValueError:
+    except (ValueError, TypeError):
         raise IntegerExcelError(value, name)
 
 
-def convert_number(value, name):
+def convert_number(value, name=None):
     if is_number(value):
         return value
     for type in NUMBER_TYPES:
         try:
             return type(value)
-        except ValueError:
+        except (ValueError, TypeError):
             pass
     raise NumberExcelError(value, name)
 
 
-def convert_range(value, name):
+def convert_range(value, name=None):
     if not is_range(value):
         raise RangeExcelError(value, name)
     return value
 
 
-def convert_text(value, name):
+def convert_text(value, name=None):
     try:
         return str(value)
-    except ValueError:
+    except (ValueError, TypeError):
         raise TextExcelError(value, name)
 
 
@@ -288,15 +302,6 @@ def length(values):
     return len(flatten(values))
 
 
-def _convert_str_to_number(value):
-    for ntype in NUMBER_TYPES:
-        try:
-            return ntype(value)
-        except ValueError:
-            pass
-    return value
-
-
 def parse_criteria(criteria):
 
     if is_number(criteria):
@@ -312,13 +317,13 @@ def parse_criteria(criteria):
             operator = CRITERIA_OPERATORS['=']
             str_value = criteria
 
-        value = _convert_str_to_number(str_value)
+        try:
+            value = convert_number(str_value)
+        except ValueExcelError:
+            value = str_value
 
-        def check(x):
-            try:
-                return operator(x, value)
-            except TypeError:
-                return False
+        def check(probe):
+            return operator(probe, value)
 
     else:
         def check(x):

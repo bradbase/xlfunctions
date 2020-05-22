@@ -11,6 +11,9 @@ class TextModuleTest(unittest.TestCase):
         self.assertEqual(
             text.CONCAT("SPAM", " ", xl.RangeData([[1, 2]]), 4), 'SPAM 4')
 
+    def test_CONCAT_with_too_many_items(self):
+        self.assertIsInstance(text.CONCAT(*[0]*300), xl.ValueExcelError)
+
     def test_MID(self):
         self.assertEqual(text.MID('Romain', 3, 4), 'main')
         self.assertEqual(text.MID('Romain', 1, 2), 'Ro')
@@ -27,6 +30,11 @@ class TextModuleTest(unittest.TestCase):
 
     def test_MID_num_chars_must_be_positive(self):
         self.assertIsInstance(text.MID('Romain', 1, -1), xl.NumExcelError)
+
+    def test_MID_with_too_large_text(self):
+        self.assertIsInstance(
+            text.MID('foo'+' '*xl.CELL_CHARACTER_LIMIT, 1, 3),
+            xl.ValueExcelError)
 
     def test_RIGHT(self):
         self.assertEqual(text.RIGHT("Sale Price", 5), "Price")

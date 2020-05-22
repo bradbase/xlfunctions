@@ -22,7 +22,7 @@ def IRR(values: xl.Range, guess: xl.Number = None):
 
 @xl.register()
 @xl.validate_args
-def NPV(rate: xl.Number, *values: xl.Range):
+def NPV(rate: xl.Number, *values):
     """Calculates the net present value of an investment by using a discount
     rate and a series of future payments (negative values) and income
     (positive values).
@@ -33,10 +33,10 @@ def NPV(rate: xl.Number, *values: xl.Range):
     if not len(values):
         return xl.ValueExcelError('value1 is required')
 
-    cashflow = filter(xl.is_number, xl.flatten(values))
+    cashflow = list(filter(xl.is_number, xl.flatten(values)))
 
     if xl.COMPATIBILITY == 'PYTHON':
-        return numpy_financial.npv(discount_rate, cashflow)
+        return numpy_financial.npv(rate, cashflow)
 
     return sum([
         float(val) * (1 + rate)**-(i+1)

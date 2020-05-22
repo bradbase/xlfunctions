@@ -38,8 +38,8 @@ def VLOOKUP(
     if range_lookup:
         raise NotImplementedError("Excact match only supported at the moment.")
 
-    if col_index_num > xl.length(table_array):
-        return xl.ValueError(
+    if col_index_num > len(table_array.values[0]):
+        return xl.ValueExcelError(
             'col_index_num is greater than the number of cols in table_array')
 
     table_array = table_array.set_index(0)
