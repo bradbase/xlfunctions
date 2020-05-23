@@ -14,8 +14,10 @@ def CONCAT(*texts):
         return xl.ValueExcelError(
             f"Can't concat more than 254 arguments. Provided: {len(texts)}")
 
+    texts = xl.flatten(texts)
     return ''.join([
-        str(text) for text in texts if xl.is_text(text) or xl.is_number(text)
+        str(text) for text in xl.flatten(texts)
+        if xl.is_text(text) or xl.is_number(text)
     ])
 
 

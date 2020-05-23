@@ -9,7 +9,7 @@ class TextModuleTest(unittest.TestCase):
         self.assertEqual(
             text.CONCAT("SPAM", " ", "SPAM"), 'SPAM SPAM')
         self.assertEqual(
-            text.CONCAT("SPAM", " ", xl.RangeData([[1, 2]]), 4), 'SPAM 4')
+            text.CONCAT("SPAM", " ", xl.RangeData([[1, 2]]), 4), 'SPAM 124')
 
     def test_CONCAT_with_too_many_items(self):
         self.assertIsInstance(text.CONCAT(*[0]*300), xl.ValueExcelError)
