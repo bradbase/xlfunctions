@@ -34,6 +34,9 @@ class DateModuleTest(unittest.TestCase):
         self.assertIsInstance(math.MOD('bad', 2), xl.IntegerExcelError)
         self.assertIsInstance(math.MOD(1, 'bad'), xl.IntegerExcelError)
 
+    def test_PI(self):
+        self.assertEqual(math.PI(), 3.141592653589793)
+
     def test_POWER(self):
         self.assertEqual(math.POWER(10, 2), 100)
         self.assertEqual(math.POWER('-1', 2), 1)
