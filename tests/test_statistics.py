@@ -40,10 +40,10 @@ class StatisticsModuleTest(unittest.TestCase):
         self.assertEqual(statistics.COUNTA(range1), 3)
 
     def test_COUNTA_with_bad_arg(self):
-        self.assertIsInstance(statistics.COUNTA(None), xl.ValueExcelError)
+        self.assertIsInstance(statistics.COUNTA(None), xl.NullExcelError)
 
     def test_COUNTA_without_any_values(self):
-        self.assertIsInstance(statistics.COUNTA(), xl.ValueExcelError)
+        self.assertIsInstance(statistics.COUNTA(), xl.NullExcelError)
 
     def test_COUNTA_with_too_many_values(self):
         self.assertIsInstance(statistics.COUNTA([0]*300), xl.ValueExcelError)
