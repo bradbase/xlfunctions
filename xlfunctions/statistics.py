@@ -51,7 +51,7 @@ def COUNTA(*values):
     """
     values = xl.flatten(values)
     if not len(values) or values[0] is None:
-        return xl.ValueExcelError('value1 is required')
+        return xl.NullExcelError('value1 is required')
 
     if len(values) > 255:
         return xl.ValueExcelError(

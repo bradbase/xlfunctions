@@ -41,6 +41,18 @@ def MOD(number: xl.Integer, divisor: xl.Integer):
 
 
 @xl.register()
+def PI():
+    """Returns the number 3.14159265358979, the mathematical constant pi.
+
+    Accurate to 15 digits.
+
+    https://support.office.com/en-us/article/
+        pi-function-264199d0-a3ba-46b8-975a-c4a04608989b
+    """
+    return math.pi
+
+
+@xl.register()
 @xl.validate_args
 def POWER(number: xl.Number, power: xl.Number):
     """Returns the result of a number raised to a power.
@@ -155,6 +167,8 @@ def SUMIF(range: xl.Range, criteria, sum_range: xl.Range = None):
 def SUMPRODUCT(*ranges: List[xl.Range]):
     """Returns the sum of the products of corresponding ranges or arrays.
 
+    https://support.office.com/en-us/article/
+        sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e
     """
     if len(ranges) == 0:
         return xl.NullExcelError('Not enough arguments for function.')
