@@ -69,6 +69,11 @@ class ExcelError(Exception):
     def __str__(self):
         return str(self.value)
 
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return str(self) == other
+        return hash(self) == hash(other)
+
 
 class SpecificExcelError(ExcelError):
     value = None
