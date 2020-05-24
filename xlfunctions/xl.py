@@ -56,6 +56,7 @@ CRITERIA_OPERATORS = {
 class ExcelError(Exception):
 
     def __init__(self, value, info=None):
+        super().__init__(info)
         self.value = value
         self.info = info
 
@@ -66,14 +67,14 @@ class ExcelError(Exception):
             return '<unprintable>'
 
     def __str__(self):
-        return self.value
+        return str(self.value)
 
 
 class SpecificExcelError(ExcelError):
     value = None
 
     def __init__(self, info=None):
-        self.info = info
+        super().__init__(self.value, info)
 
 
 class NullExcelError(SpecificExcelError):

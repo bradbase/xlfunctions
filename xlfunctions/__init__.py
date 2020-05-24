@@ -11,4 +11,4 @@ name = "xlfunctions"
 from .xl import FUNCTIONS, ExcelError
 
 # Make sure to register all functions
-from . import date, financial, logical, lookup, math, statistics, text
+from . import date, financial, logical, lookup, math, operator, statistics, text
