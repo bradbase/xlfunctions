@@ -151,6 +151,7 @@ def SUMIF(range: xl.Range, criteria, sum_range: xl.Range = None):
     if sum_range is None:
         sum_range = range
 
+    range = xl.flatten(range)
     sum_range = xl.flatten(sum_range)
 
     # zip() will automatically drop any range values that have indexes larger

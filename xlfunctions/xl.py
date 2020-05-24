@@ -308,8 +308,8 @@ def parse_criteria(criteria):
         def check(x):
             return x == criteria
 
-    elif type(criteria) == str:
-        search = re.search(CRITERIA_REGEX, criteria.lower()).group
+    elif isinstance(criteria, str):
+        search = re.search(CRITERIA_REGEX, criteria).group
         str_operator, str_value = search(1), search(2)
 
         operator = CRITERIA_OPERATORS.get(str_operator)
