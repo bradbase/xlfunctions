@@ -4,6 +4,7 @@ include *.py
 include *.yml
 include .coveragerc
 include tox.ini
+include LICENSE
 
 recursive-include tests *
 recursive-include xlfunctions *

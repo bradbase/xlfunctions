@@ -37,7 +37,7 @@ Excel, please read the discussion on Excel number precision (below)**
 
 
 Supported Functions
-===================
+-------------------
 
 * ABS
 * AVERAGE
@@ -73,7 +73,7 @@ Supported Functions
 
 
 Run Tests
-=========
+---------
 
 Setup your environment::
 
@@ -89,7 +89,7 @@ Or simply run tox::
   tox
 
 Adding/Registering Excel Functions
-==================================
+----------------------------------
 
 Excel functions can be added by any code using the the
 ``xlfunctions.xl.register()`` decorator. Here is a simple example:
@@ -120,7 +120,7 @@ functionality.
 
 
 Excel number precision
-======================
+----------------------
 
 Excel number precision is a complex discussion.
 

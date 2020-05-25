@@ -29,6 +29,8 @@ setup(
         ),
     url="https://github.com/bradbase/xlfunctions",
     packages=find_packages(),
+    license="GPL 3.0",
+    keywords="Excel functions",
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
@@ -40,15 +42,17 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     install_requires=[
-        'numpy >= 1.18.1',
-        'pandas >= 1.0.1',
-        'numpy_financial >= 1.0.0',
+        'numpy',
+        'pandas',
+        'numpy_financial',
         'python-dateutil',
         'yearfrac',
     ],
     extras_require=dict(
         test=TESTS_REQUIRE,
     ),
-    python_requires='>=3.7.6',
+    python_requires='>=3.7',
     tests_require=TESTS_REQUIRE,
+    include_package_data=True,
+    zip_safe=False,
 )
