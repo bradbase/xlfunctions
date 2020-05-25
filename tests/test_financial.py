@@ -51,6 +51,45 @@ class FinancialModuleTest(unittest.TestCase):
     def test_SLN(self):
         self.assertEqual(financial.SLN(30000, 7500, 10), 2250)
 
+    def test_VDB(self):
+        self.assertAlmostEqual(
+            financial.VDB(
+                cost=575000,
+                salvage=5000,
+                life=10,
+                start_period=3,
+                end_period=5,
+                factor=1.5,
+            ),
+            102160.546875
+        )
+
+    def test_VDB_partial(self):
+        self.assertAlmostEqual(
+            financial.VDB(
+                cost=1,
+                salvage=0,
+                life=14,
+                start_period=11.5,
+                end_period=12.5,
+                factor=1.25,
+            ),
+            0.068726290454684
+        )
+
+    def test_VDB_partial_no_switch(self):
+        self.assertAlmostEqual(
+            financial.VDB(
+                cost=1,
+                salvage=0,
+                life=5.0,
+                start_period=0.5,
+                end_period=1.5,
+                factor=2.5,
+            ),
+            0.375
+        )
+
     def test_XNPV(self):
         range_00 = xl.RangeData(
             [[-10000, 2750, 4250, 3250, 2750]])
