@@ -12,4 +12,5 @@ recursive-include xlfunctions *
 recursive-exclude docs/_build *
 
 global-exclude *.pyc
+global-exclude .coverage
 
