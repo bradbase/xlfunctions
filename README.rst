@@ -2,12 +2,17 @@
 XLFunctions
 ===========
 
+.. image:: https://travis-ci.org/bradbase/xlfunctions.png?branch=master
+   :target: https://travis-ci.org/bradbase/xlfunctions
+
+.. image:: https://coveralls.io/repos/github/bradbase/xlfunctions/badge.svg?branch=master
+   :target: https://coveralls.io/github/bradbase/xlfunctions?branch=master
+
 .. image:: https://img.shields.io/pypi/v/xlfunctions.svg
     :target: https://pypi.python.org/pypi/xlfunctions
 
 .. image:: https://img.shields.io/pypi/pyversions/xlfunctions.svg
     :target: https://pypi.python.org/pypi/xlfunctions/
-
 
 A collection of classes which implement functions as used in Microsoft
 Excel. The intent is to be a definitive library to support evaluating Excel
