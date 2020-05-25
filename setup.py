@@ -16,7 +16,7 @@ TESTS_REQUIRE = [
 
 setup(
     name="xlfunctions",
-    version='0.1.0',
+    version='0.1.1.dev0',
     author="Bradley van Ree",
     author_email="brads@bradbase.net",
     description=(
