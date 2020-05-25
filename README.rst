@@ -2,6 +2,13 @@
 XLFunctions
 ===========
 
+.. image:: https://img.shields.io/pypi/v/xlfunctions.svg
+    :target: https://pypi.python.org/pypi/xlfunctions
+
+.. image:: https://img.shields.io/pypi/pyversions/xlfunctions.svg
+    :target: https://pypi.python.org/pypi/xlfunctions/
+
+
 A collection of classes which implement functions as used in Microsoft
 Excel. The intent is to be a definitive library to support evaluating Excel
 calculations.
