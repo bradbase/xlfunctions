@@ -13,4 +13,5 @@ script:
 notifications:
     email: false
 after_success:
-  - coveralls
+  - coveralls debug --rcfile $TRAVIS_BUILD_DIR/.coveragerc
+  - coveralls -v --rcfile $TRAVIS_BUILD_DIR/.coveragerc
