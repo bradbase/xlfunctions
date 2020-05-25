@@ -14,7 +14,7 @@ XLFunctions
 .. image:: https://img.shields.io/pypi/pyversions/xlfunctions.svg
     :target: https://pypi.python.org/pypi/xlfunctions/
 
-.. |status| image:: https://img.shields.io/pypi/status/xlfunctions.svg
+.. image:: https://img.shields.io/pypi/status/xlfunctions.svg
     :target: https://pypi.org/project/xlfunctions/
     :alt: Package stability
 
