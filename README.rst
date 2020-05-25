@@ -16,9 +16,9 @@ There are also a handful of libraries to be found which have attempted a
 universal Python implementation of Excel functions however as they aren't
 being actively used by a library they appear to be abandoned reasonably
 rapidly. xlfunctions is being used by
-(xlcalcualtor)[https://github.com/bradbase/xlcalculator] (an attempted
-re-write of (Koala2)[https://github.com/vallettea/koala] and, in turn,
-(FlyingKoala)[https://github.com/bradbase/flyingkoala].
+`xlcalcualtor <https://github.com/bradbase/xlcalculator>`_ (an attempted
+re-write of `Koala2 <https://github.com/vallettea/koala>`_ and, in turn,
+`FlyingKoala <https://github.com/bradbase/flyingkoala>`_.
 
 Excel occasionally does unusual things while calculating which may not always
 align with what is accepted outside the realms of Excel. With this in mind it
@@ -32,72 +32,84 @@ Excel, please read the discussion on Excel number precision (below)**
 Supported Functions
 ===================
 
-  * ABS
-  * AVERAGE
-  * CHOOSE
-  * CONCAT
-  * COUNT
-  * COUNTA
-  * DATE
-  * IRR
-  * LN
+* ABS
+* AVERAGE
+* CHOOSE
+* CONCAT
+* COUNT
+* COUNTA
+* DATE
+* IRR
+* LN
     - Python Math.log() differs from Excel LN. Currently returning Math.log()
-  * MAX
-  * MID
-  * MIN
-  * MOD
-  * NPV
-  * PMT
-  * POWER
-  * RIGHT
-  * ROUND
-  * ROUNDDOWN
-  * ROUNDUP
-  * SLN
-  * SQRT
-  * SUM
-  * SUMPRODUCT
-  * TODAY
-  * VLOOKUP
+* MAX
+* MID
+* MIN
+* MOD
+* NPV
+* PMT
+* POWER
+* RIGHT
+* ROUND
+* ROUNDDOWN
+* ROUNDUP
+* SLN
+* SQRT
+* SUM
+* SUMPRODUCT
+* TODAY
+* VLOOKUP
     - Exact match only
-  * XNPV
-  * YEARFRAC
+* XNPV
+* YEARFRAC
     - Basis 1, Actual/actual, is only within 3 decimal places
 
 
 Run Tests
 =========
 
+Setup your environment::
+
+  virtualenv -p 3.7 ve
+  ve/bin/pip install -e .[test]
+
 From the root xlfunctions directory::
 
-  python -m unittest discover -p "test_*.py"
+  ve/bin/python -m unittest discover -p "test_*.py"
 
 Or simply run tox::
 
   tox
 
-How to add Excel functions
-==========================
+Adding/Registering Excel Functions
+==================================
 
-Excel function support can be easily added to xlfunctions.
+Excel functions can be added by any code using the the
+``xlfunctions.xl.register()`` decorator. Here is a simple example:
 
-Do the git things.. (fork, clone, branch. checkout the new branch) and then;
+.. code-block:: Python
 
-- Write a class for the function in xlfunctions. Use existing supported
-  function classes as template examples.
+  from xlfunctions import xl
 
-- Add the function name and related class to excel_lib.py SUPPORTED_FUNCTIONS
-  dict
+  @xl.register()
+  @xl.validate_args
+  def ADDONE(num: xl.Number):
+      return num + 1
 
-- Add the class to xlfunctions\\\_\_init\_\_.py
+The `v@xl.alidate_args` decorator will ensure that the annotated arguments are
+converted and validated. For example, even if you pass in a string, it is
+converted to a number (in typical Excel fashion):
 
-- Write a test for it in tests. Use existing tests as template examples. Often
-  a great place for example test ideas is found on the Microsoft Office Excel
-  help page for that function.
+.. code-block:: Python
 
-- Update the README.md to state that function is supported.
+  >>> ADDONE(1):
+  2
+  >>> ADDONE('1'):
+  2
 
-- Put your code, tests and doco forward as a pull request.
+If you would like to contribute functions, please create a pull request. All
+new functions should be accompanied by sufficient tests to cover the
+functionality.
 
 
 Excel number precision
@@ -105,13 +117,13 @@ Excel number precision
 
 Excel number precision is a complex discussion.
 
-It has been discussed in a (Wikipedia
-page)[https://en.wikipedia.org/wiki/Numeric_precision_in_Microsoft_Excel].
+It has been discussed in a `Wikipedia
+page <https://en.wikipedia.org/wiki/Numeric_precision_in_Microsoft_Excel>`_.
 
 The fundamentals come down to floating point numbers and a contention between
 how they are represented in memory Vs how they are stored on disk Vs how they
-are presented on screen. A (Microsoft
-article)[https://www.microsoft.com/en-us/microsoft-365/blog/2008/04/10/understanding-floating-point-precision-aka-why-does-excel-give-me-seemingly-wrong-answers/]
+are presented on screen. A `Microsoft
+article <https://www.microsoft.com/en-us/microsoft-365/blog/2008/04/10/understanding-floating-point-precision-aka-why-does-excel-give-me-seemingly-wrong-answers/>`_
 explains the contention.
 
 This project is attempting to take care while reading numbers from the Excel

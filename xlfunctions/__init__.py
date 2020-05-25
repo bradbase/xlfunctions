@@ -8,7 +8,7 @@ https://support.office.com/en-us/article/
 
 name = "xlfunctions"
 
-from .xl import FUNCTIONS, ExcelError
+from .xl import FUNCTIONS, ExcelError, register
 
 # Make sure to register all functions
 from . import date, financial, logical, lookup, math, operator, statistics, text
