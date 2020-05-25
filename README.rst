@@ -34,7 +34,7 @@ being actively used by a library they appear to be abandoned reasonably
 rapidly. xlfunctions is being used by
 `xlcalcualtor <https://github.com/bradbase/xlcalculator>`_ (an attempted
 re-write of `Koala2 <https://github.com/vallettea/koala>`_ and, in turn,
-`FlyingKoala <https://github.com/bradbase/flyingkoala>`_.
+`FlyingKoala <https://github.com/bradbase/flyingkoala>`_).
 
 Excel occasionally does unusual things while calculating which may not always
 align with what is accepted outside the realms of Excel. With this in mind it
