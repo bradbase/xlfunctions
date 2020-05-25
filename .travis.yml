@@ -13,4 +13,5 @@ script:
 notifications:
     email: false
 after_success:
+  - find . -name ".coverage" -exec cp {} . \;
   - coveralls -v
