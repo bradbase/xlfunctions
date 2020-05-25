@@ -72,7 +72,7 @@ class ExcelError(Exception):
     def __eq__(self, other):
         if isinstance(other, str):
             return str(self) == other
-        return hash(self) == hash(other)
+        return id(self) == id(other)
 
 
 class SpecificExcelError(ExcelError):
@@ -145,6 +145,15 @@ class RangeExcelError(ValueExcelError):
         vtype = type(value).__name__
         value = self._safe_value_str(value)
         super().__init__(f'`{name}` "{value}" must be a range. Got: {vtype}')
+
+
+class EmptyExcelError(ValueExcelError):
+
+    def __init__(self, value, name='value'):
+        self.value = value
+        vtype = type(value).__name__
+        value = self._safe_value_str(value)
+        super().__init__(f'`{name}` "{value}" must be None or "". Got: {vtype}')
 
 
 class Functions(dict):
@@ -241,6 +250,11 @@ def convert_text(value, name=None):
         return str(value)
     except (ValueError, TypeError):
         raise TextExcelError(value, name)
+
+def convert_empty(value, name=None):
+    if not is_empty(value):
+        raise EmptyExcelError(value, name)
+    return None
 
 
 TYPE_TO_COVERTER = {

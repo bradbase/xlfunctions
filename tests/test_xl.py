@@ -21,6 +21,14 @@ class ExcelErrorTest(unittest.TestCase):
         err = xl.ExcelError('#N/A', 'Not applicable')
         self.assertEqual(str(err), '#N/A')
 
+    def test_eq(self):
+        err = xl.ExcelError('#N/A', 'Not applicable')
+        self.assertEqual(err, err)
+
+    def test_eq_to_string(self):
+        err = xl.ExcelError('#N/A', 'Not applicable')
+        self.assertEqual(err, '#N/A')
+
 
 class SpecificExcelErrorTest(unittest.TestCase):
 
@@ -109,6 +117,14 @@ class RangeExcelErrorTest(unittest.TestCase):
         err = xl.RangeExcelError('bad', 'field')
         self.assertEqual(
             err.info, '`field` "bad" must be a range. Got: str')
+
+
+class EmptyExcelErrorTest(unittest.TestCase):
+
+    def test_init(self):
+        err = xl.EmptyExcelError('bad', 'field')
+        self.assertEqual(
+            err.info, '`field` "bad" must be None or "". Got: str')
 
 
 class FunctionsTest(unittest.TestCase):
@@ -238,6 +254,16 @@ class XlModuleTest(unittest.TestCase):
     def test_convert_text_with_conversion_error(self):
         with self.assertRaises(xl.TextExcelError):
             xl.convert_text(NoStr())
+
+    def test_convert_empty(self):
+        self.assertIsNone(xl.convert_empty(None))
+        self.assertIsNone(xl.convert_empty(''))
+
+    def test_convert_empty_with_non_empty_value(self):
+        with self.assertRaises(xl.EmptyExcelError):
+            xl.convert_empty(0)
+        with self.assertRaises(xl.EmptyExcelError):
+            xl.convert_empty('data')
 
     def test_validate_args(self):
 

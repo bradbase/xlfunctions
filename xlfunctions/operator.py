@@ -1,3 +1,4 @@
+from typing import Optional
 
 from . import xl
 
@@ -39,7 +40,7 @@ def OP_NE(left, right):
 
 @xl.register()
 @xl.validate_args
-def OP_GT(left: xl.Number, right: xl.Number):
+def OP_GT(left: Optional[xl.Number], right: Optional[xl.Number]):
     if left is None or right is None:
         return False
     return left > right
@@ -47,7 +48,7 @@ def OP_GT(left: xl.Number, right: xl.Number):
 
 @xl.register()
 @xl.validate_args
-def OP_LT(left: xl.Number, right: xl.Number):
+def OP_LT(left: Optional[xl.Number], right: Optional[xl.Number]):
     if left is None or right is None:
         return False
     return left < right
@@ -55,7 +56,7 @@ def OP_LT(left: xl.Number, right: xl.Number):
 
 @xl.register()
 @xl.validate_args
-def OP_GE(left: xl.Number, right: xl.Number):
+def OP_GE(left: Optional[xl.Number], right: Optional[xl.Number]):
     if left is None or right is None:
         return False
     return left >= right
@@ -63,7 +64,7 @@ def OP_GE(left: xl.Number, right: xl.Number):
 
 @xl.register()
 @xl.validate_args
-def OP_LE(left: xl.Number, right: xl.Number):
+def OP_LE(left: Optional[xl.Number], right: Optional[xl.Number]):
     if left is None or right is None:
         return False
     return left <= right

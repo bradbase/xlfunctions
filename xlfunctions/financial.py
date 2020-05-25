@@ -108,9 +108,8 @@ def VDB(
     sln_depr = 0
     result = 0
     start_life = 0
-    delta_life = life % 1
     # Handle cases when life is not an integer.
-    if delta_life > 0:
+    if life % 1 > 0:
         end_life = int(life + 1)
 
     else:

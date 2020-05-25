@@ -90,6 +90,19 @@ class FinancialModuleTest(unittest.TestCase):
             0.375
         )
 
+    def test_VDB_non_integer_life(self):
+        self.assertAlmostEqual(
+            financial.VDB(
+                cost=575000,
+                salvage=5000,
+                life=10.5,
+                start_period=3,
+                end_period=5,
+                factor=1.5,
+            ),
+            98708.55092429437
+        )
+
     def test_XNPV(self):
         range_00 = xl.RangeData(
             [[-10000, 2750, 4250, 3250, 2750]])

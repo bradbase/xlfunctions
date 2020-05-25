@@ -14,7 +14,7 @@ def AND(*logicals):
     return all([
         bool(logical)
         for logical in xl.flatten(logicals)
-        if not xl.is_empty
+        if not xl.is_empty(logical)
     ])
 
 
@@ -31,7 +31,7 @@ def OR(*logicals):
     return any([
         bool(logical)
         for logical in xl.flatten(logicals)
-        if not xl.is_empty
+        if not xl.is_empty(logical)
     ])
 
 
