@@ -4,13 +4,32 @@
 #
 #    pip-compile
 #
-numpy-financial==1.0.0    # via xlfunctions (setup.py)
-numpy==1.18.4             # via numpy-financial, pandas, xlfunctions (setup.py), yearfrac
-pandas==1.0.3             # via xlfunctions (setup.py)
-python-dateutil==2.8.1    # via pandas, xlfunctions (setup.py)
+attrs==19.3.0             # via pytest
+click==7.1.2              # via pip-tools
+coverage==5.1             # via pytest-cov, xlfunctions
+flake8==3.8.2             # via xlfunctions
+mccabe==0.6.1             # via flake8
+mock==4.0.2               # via xlfunctions
+more-itertools==8.3.0     # via pytest
+numpy-financial==1.0.0    # via xlfunctions
+numpy==1.18.4             # via numpy-financial, pandas, xlfunctions, yearfrac
+packaging==20.4           # via pytest
+pandas==1.0.3             # via xlfunctions
+pip-tools==5.1.2          # via xlfunctions
+pluggy==0.13.1            # via pytest
+py==1.8.1                 # via pytest
+pycodestyle==2.6.0        # via flake8
+pyflakes==2.2.0           # via flake8
+pyparsing==2.4.7          # via packaging
+pytest-cov==2.9.0         # via xlfunctions
+pytest==5.4.2             # via pytest-cov, xlfunctions
+python-dateutil==2.8.1    # via pandas, xlfunctions
 pytz==2020.1              # via pandas
-six==1.15.0               # via python-dateutil, yearfrac
-yearfrac==0.4.3           # via xlfunctions (setup.py)
+six==1.15.0               # via packaging, pip-tools, python-dateutil, yearfrac
+wcwidth==0.1.9            # via pytest
+file:///opt/work/shoobx/xlfunctions  # via -r requirements.in
+yearfrac==0.4.3           # via xlfunctions
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools
