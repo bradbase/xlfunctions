@@ -41,7 +41,7 @@ ERROR_CODES = (
     ERROR_CODE_NA,
 )
 
-CRITERIA_REGEX = '(\W*)(.*)'
+CRITERIA_REGEX = r'(\W*)(.*)'
 
 CRITERIA_OPERATORS = {
     '<': operator.lt,
@@ -156,6 +156,35 @@ class EmptyExcelError(ValueExcelError):
         super().__init__(f'`{name}` "{value}" must be None or "". Got: {vtype}')
 
 
+class Expr:
+    """Expression
+
+    Represents an expression that has yet to be evaluated. This class is
+    agnostic to the internals of the implementation details. In other words,
+    it does not expect particular objects. all it needs is a callable and its
+    arguments.
+
+    The constructor also accepts any arbitrary keywords that will be set on
+    the expression to allow for debugging and discovery. Such info can include
+    AST nodes, return type, cell reference, etc. (None of th einfo fields are
+    required or will be considered by this library.)
+    """
+
+    def __init__(self, callable, args=(), kwargs={}, **info):
+        self.callable = callable
+        self.args = args
+        self.kwargs = kwargs.copy()
+        for name, value in info.items():
+            setattr(self, name, value)
+
+    def __call__(self):
+        return self.callable(*self.args, *self.kwargs)
+
+
+def ValueExpr(value):
+    return Expr(lambda: value, value=value)
+
+
 class Functions(dict):
 
     def register(self, func, name=None):
@@ -256,12 +285,18 @@ def convert_empty(value, name=None):
         raise EmptyExcelError(value, name)
     return None
 
+def convert_expr(value, name=None):
+    if not isinstance(value, Expr):
+        return ValueExpr(value)
+    return value
+
 
 TYPE_TO_COVERTER = {
     Integer: convert_integer,
     Number: convert_number,
     Range: convert_range,
     Text: convert_text,
+    Expr: convert_expr
 }
 
 
@@ -271,7 +306,7 @@ def _validate(vtype, val, name):
         return converter(val, name)
 
     # Support lists with value types
-    if getattr(vtype, '__origin__', None) == list:
+    if getattr(vtype, '__origin__', None) in [list, tuple]:
         return [_validate(vtype.__args__[0], item, name) for item in val]
 
     # Support unions

@@ -127,6 +127,31 @@ class EmptyExcelErrorTest(unittest.TestCase):
             err.info, '`field` "bad" must be None or "". Got: str')
 
 
+class ExprTest(unittest.TestCase):
+
+    def test_init(self):
+
+        def callable(arg):
+            return arg
+
+        expr = xl.Expr(callable, (1,), value=1)
+        self.assertEqual(expr.callable, callable)
+        self.assertEqual(expr.value, 1)
+
+    def test_call(self):
+
+        def callable(arg):
+            return arg
+
+        expr = xl.Expr(callable, (1,), value=1)
+        self.assertEqual(expr(), 1)
+
+    def test_ValueExpr(self):
+        expr = xl.ValueExpr(1)
+        self.assertEqual(expr.value, 1)
+        self.assertEqual(expr(), 1)
+
+
 class FunctionsTest(unittest.TestCase):
 
     def test_register(self):
@@ -264,6 +289,13 @@ class XlModuleTest(unittest.TestCase):
             xl.convert_empty(0)
         with self.assertRaises(xl.EmptyExcelError):
             xl.convert_empty('data')
+
+    def test_convert_expr(self):
+        expr = xl.ValueExpr(1)
+        self.assertIs(xl.convert_expr(expr), expr)
+
+    def test_convert_expr_with_regular_value(self):
+        self.assertIsInstance(xl.convert_expr(1), xl.Expr)
 
     def test_validate_args(self):
 

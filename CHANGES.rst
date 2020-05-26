@@ -6,7 +6,10 @@ CHANGES
 0.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Support for delayed argument execution by introducing expressions that can
+  be evaluated when needed. This is required to support efficient logical
+  operator implementations. For example, when an "if"-condition is true, the
+  false value does not need to be computed.
 
 
 0.1.0 (2020-05-25)

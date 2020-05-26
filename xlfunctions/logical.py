@@ -1,8 +1,10 @@
+from typing import Tuple
 from . import xl
 
 
 @xl.register()
-def AND(*logicals):
+@xl.validate_args
+def AND(*logicals: Tuple[xl.Expr]):
     """Determine if all conditions in a test are TRUE
 
     https://support.office.com/en-us/article/
@@ -11,15 +13,21 @@ def AND(*logicals):
     if not logicals:
         return xl.NullExcelError('logical1 is required')
 
-    return all([
-        bool(logical)
-        for logical in xl.flatten(logicals)
-        if not xl.is_empty(logical)
-    ])
+    # Use delayed evaluation to minimize th amount of valaues to evaluate.
+    for logical in logicals:
+        val = logical()
+        for item in xl.flatten([val]):
+            if xl.is_empty(item):
+                continue
+            if not bool(item):
+                return False
+
+    return True
 
 
 @xl.register()
-def OR(*logicals):
+@xl.validate_args
+def OR(*logicals: Tuple[xl.Expr]):
     """Determine if any conditions in a test are TRUE.
 
     https://support.office.com/en-us/article/
@@ -28,18 +36,30 @@ def OR(*logicals):
     if not logicals:
         return xl.NullExcelError('logical1 is required')
 
-    return any([
-        bool(logical)
-        for logical in xl.flatten(logicals)
-        if not xl.is_empty(logical)
-    ])
+    # Use delayed evaluation to minimize th amount of valaues to evaluate.
+    for logical in logicals:
+        val = logical()
+        for item in xl.flatten([val]):
+            if xl.is_empty(item):
+                continue
+            if bool(item):
+                return True
+
+    return False
 
 
 @xl.register()
-def IF(logical_test, value_if_true, value_if_false=None):
+@xl.validate_args
+def IF(
+        logical_test: xl.Expr,
+        value_if_true: xl.Expr,
+        value_if_false: xl.Expr = None
+):
     """Return one value if a condition is true and another value if it's false.
 
     https://support.office.com/en-us/article/
         if-function-69aed7c9-4e8a-4755-a9bc-aa8bbff73be2
     """
-    return value_if_true if logical_test else value_if_false
+    # Use delayed evaluation to only evaluate the true or false value but not
+    # both.
+    return value_if_true() if logical_test() else value_if_false()
