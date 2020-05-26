@@ -1,1 +1,1 @@
-.[test,build]
+-e file:.[test,build]

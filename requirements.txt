@@ -4,6 +4,7 @@
 #
 #    pip-compile
 #
+-e file:.                 # via -r requirements.in
 attrs==19.3.0             # via pytest
 click==7.1.2              # via pip-tools
 coverage==5.1             # via pytest-cov, xlfunctions
@@ -27,7 +28,6 @@ python-dateutil==2.8.1    # via pandas, xlfunctions
 pytz==2020.1              # via pandas
 six==1.15.0               # via packaging, pip-tools, python-dateutil, yearfrac
 wcwidth==0.1.9            # via pytest
-file:///opt/work/shoobx/xlfunctions  # via -r requirements.in
 yearfrac==0.4.3           # via xlfunctions
 
 # The following packages are considered to be unsafe in a requirements file:
