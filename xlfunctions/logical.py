@@ -1,23 +1,26 @@
 from typing import Tuple
-from . import xl
+
+from . import xl, xlerrors, xltypes
 
 
 @xl.register()
 @xl.validate_args
-def AND(*logicals: Tuple[xl.Expr]):
+def AND(
+        *logicals: Tuple[xltypes.XlExpr]
+) -> xltypes.XlBoolean:
     """Determine if all conditions in a test are TRUE
 
     https://support.office.com/en-us/article/
         and-function-5f19b2e8-e1df-4408-897a-ce285a19e9d9
     """
     if not logicals:
-        return xl.NullExcelError('logical1 is required')
+        return xlerrors.NullExcelError('logical1 is required')
 
     # Use delayed evaluation to minimize th amount of valaues to evaluate.
     for logical in logicals:
         val = logical()
         for item in xl.flatten([val]):
-            if xl.is_empty(item):
+            if xltypes.Blank.is_blank(item):
                 continue
             if not bool(item):
                 return False
@@ -27,20 +30,22 @@ def AND(*logicals: Tuple[xl.Expr]):
 
 @xl.register()
 @xl.validate_args
-def OR(*logicals: Tuple[xl.Expr]):
+def OR(
+        *logicals: Tuple[xltypes.XlExpr]
+) -> xltypes.XlBoolean:
     """Determine if any conditions in a test are TRUE.
 
     https://support.office.com/en-us/article/
         or-function-7d17ad14-8700-4281-b308-00b131e22af0
     """
     if not logicals:
-        return xl.NullExcelError('logical1 is required')
+        return xlerrors.NullExcelError('logical1 is required')
 
     # Use delayed evaluation to minimize th amount of valaues to evaluate.
     for logical in logicals:
         val = logical()
         for item in xl.flatten([val]):
-            if xl.is_empty(item):
+            if xltypes.Blank.is_blank(item):
                 continue
             if bool(item):
                 return True
@@ -51,10 +56,10 @@ def OR(*logicals: Tuple[xl.Expr]):
 @xl.register()
 @xl.validate_args
 def IF(
-        logical_test: xl.Expr,
-        value_if_true: xl.Expr,
-        value_if_false: xl.Expr = None
-):
+        logical_test: xltypes.XlExpr,
+        value_if_true: xltypes.XlExpr = True,
+        value_if_false: xltypes.XlExpr = False
+) -> xltypes.XlAnything:
     """Return one value if a condition is true and another value if it's false.
 
     https://support.office.com/en-us/article/

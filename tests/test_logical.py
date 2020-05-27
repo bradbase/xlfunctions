@@ -1,7 +1,8 @@
 import unittest
-from xlfunctions import xl, logical
+from xlfunctions import logical, xltypes, xlerrors
 
-VExpr = xl.ValueExpr
+VExpr = xltypes.ValueExpr
+
 
 class LogicalModuleTest(unittest.TestCase):
 
@@ -10,7 +11,7 @@ class LogicalModuleTest(unittest.TestCase):
         self.assertEqual(logical.AND(VExpr(True), VExpr(0)), False)
 
     def test_AND_without_any_args(self):
-        self.assertIsInstance(logical.AND(), xl.NullExcelError)
+        self.assertIsInstance(logical.AND(), xlerrors.NullExcelError)
 
     def test_AND_with_direct_values(self):
         self.assertEqual(logical.AND(3, True, None), True)
@@ -21,7 +22,7 @@ class LogicalModuleTest(unittest.TestCase):
         self.assertEqual(logical.OR(VExpr(False), VExpr(0)), False)
 
     def test_OR_without_any_args(self):
-        self.assertIsInstance(logical.OR(), xl.NullExcelError)
+        self.assertIsInstance(logical.OR(), xlerrors.NullExcelError)
 
     def test_OR_with_dirext_values(self):
         self.assertEqual(logical.OR(3, True, None), True)

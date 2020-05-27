@@ -11,6 +11,27 @@ CHANGES
   operator implementations. For example, when an "if"-condition is true, the
   false value does not need to be computed.
 
+- Implemented all Excel types.
+
+  + Better control of logic differences between Python and Excel. (Compare
+    with None and blank handling, for example.)
+
+  + Tight control of type casting with very situation-specific edge case
+    handling. (For example, when a string representing a boolean will evaluate
+    as a boolean and when not. For example, `int(bool('False')) == 0` in Excel
+    but `AND('False', True) == True`.
+
+  + Make date/time its own type.
+
+- Moved errors back into their own module.
+
+- Moved criteria parsing into its own module.
+
+- Made function signature validation and conversion much more consistent
+  allowing a lot less error handling and data conversion in the function
+  body.
+
+
 
 0.1.0 (2020-05-25)
 ------------------

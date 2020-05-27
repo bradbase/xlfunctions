@@ -1,11 +1,13 @@
-import numpy
+from typing import Tuple
 
-from . import xl
+from . import xl, xlerrors, xltypes
 
 
 @xl.register()
 @xl.validate_args
-def AVERAGE(*numbers):
+def AVERAGE(
+        *numbers: Tuple[xltypes.Number]
+) -> xltypes.Number:
     """Returns the average (arithmetic mean) of the arguments.
 
     https://support.office.com/en-us/article/
@@ -17,12 +19,12 @@ def AVERAGE(*numbers):
     if len(numbers) < 1:
         return 0
 
-    return numpy.average(list(filter(xl.is_number, numbers)))
+    return sum(numbers) / len(numbers)
 
 
 @xl.register()
 @xl.validate_args
-def COUNT(*values):
+def COUNT(*values) -> xltypes.Number:
     """Counts the number of cells that contain numbers, and counts numbers
     within the list of arguments.
 
@@ -31,14 +33,14 @@ def COUNT(*values):
     """
     values = xl.flatten(values)
     if not len(values) or values[0] is None:
-        return xl.ValueExcelError('value1 is required')
+        raise xlerrors.ValueExcelError('value1 is required')
 
     if len(values) > 255:
-        return xl.ValueExcelError(
+        raise xlerrors.ValueExcelError(
             f"Can only have up to 255 supplimentary arguments. "
             f"Provided: {len(values)}")
 
-    return len(list(filter(xl.is_number, values)))
+    return len(list(filter(xltypes.Number.is_type, values)))
 
 
 @xl.register()
@@ -51,44 +53,41 @@ def COUNTA(*values):
     """
     values = xl.flatten(values)
     if not len(values) or values[0] is None:
-        return xl.NullExcelError('value1 is required')
+        raise xlerrors.NullExcelError('value1 is required')
 
     if len(values) > 255:
-        return xl.ValueExcelError(
+        raise xlerrors.ValueExcelError(
             f"Can only have up to 255 supplimentary arguments. "
             f"Provided: {len(values)}")
 
-    return len(list(filter(lambda x: not xl.is_empty(x), values)))
+    return len(list(filter(lambda x: not xltypes.Blank.is_blank(x), values)))
 
 
 @xl.register()
 @xl.validate_args
-def MAX(*numbers):
+def MAX(*numbers: Tuple[xltypes.Number]):
     """Returns the largest value in a set of values.
 
     https://support.office.com/en-us/article/
         max-function-e0012414-9ac8-4b34-9a47-73e662c08098
     """
-    numbers = xl.flatten(numbers)
     # If no non numeric cells, return zero (is what excel does)
     if len(numbers) < 1:
         return 0
 
-    return max(filter(xl.is_number, numbers))
+    return max(filter(xltypes.Number.is_type, numbers))
 
 
 @xl.register()
 @xl.validate_args
-def MIN(*numbers):
+def MIN(*numbers: Tuple[xltypes.Number]):
     """Returns the smallest number in a set of values.
 
     https://support.office.com/en-us/article/
         min-function-61635d12-920f-4ce2-a70f-96f202dcc152
     """
-    numbers = xl.flatten(numbers)
-
     # If no non numeric cells, return zero (is what excel does)
     if len(numbers) < 1:
         return 0
 
-    return min(filter(xl.is_number, numbers))
+    return min(filter(xltypes.Number.is_type, numbers))

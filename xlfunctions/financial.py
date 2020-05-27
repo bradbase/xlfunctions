@@ -1,13 +1,15 @@
-import math
 import numpy_financial
-from typing import List
+from typing import Tuple
 
-from . import xl
+from . import xl, xlerrors, xltypes
 
 
 @xl.register()
 @xl.validate_args
-def IRR(values: xl.Range, guess: xl.Number = None):
+def IRR(
+        values: xltypes.XlArray,
+        guess: xltypes.XlNumber = None
+) -> xltypes.XlNumber:
     """Returns the internal rate of return for a series of cash flows
 
     https://support.office.com/en-us/article/
@@ -22,7 +24,10 @@ def IRR(values: xl.Range, guess: xl.Number = None):
 
 @xl.register()
 @xl.validate_args
-def NPV(rate: xl.Number, *values):
+def NPV(
+        rate: xltypes.XlNumber,
+        *values: Tuple[xltypes.XlNumber],
+) -> xltypes.XlNumber:
     """Calculates the net present value of an investment by using a discount
     rate and a series of future payments (negative values) and income
     (positive values).
@@ -31,34 +36,36 @@ def NPV(rate: xl.Number, *values):
         npv-function-8672cb67-2576-4d07-b67b-ac28acf2a568
     """
     if not len(values):
-        return xl.ValueExcelError('value1 is required')
+        return xlerrors.ValueExcelError('value1 is required')
 
-    cashflow = list(filter(xl.is_number, xl.flatten(values)))
+    cashflow = [float(value) for value in values]
+    rate = float(rate)
 
     if xl.COMPATIBILITY == 'PYTHON':
         return numpy_financial.npv(rate, cashflow)
 
     return sum([
-        float(val) * (1 + rate)**-(i+1)
+        val * (1 + rate)**-(i+1)
         for (i, val) in enumerate(cashflow)
     ])
 
 
 @xl.register()
 def PMT(
-        rate: xl.Number,
-        nper: xl.Number,
-        pv: xl.Number,
-        fv: xl.Number=None,
-        type: xl.Integer = 0
-):
+        rate: xltypes.XlNumber,
+        nper: xltypes.XlNumber,
+        pv: xltypes.XlNumber,
+        fv: xltypes.XlNumber = None,
+        type: xltypes.XlNumber = 0
+) -> xltypes.XlNumber:
     """Calculates the payment for a loan based on constant payments and
     a constant interest rate.
 
     https://support.office.com/en-us/article/
         pmt-function-0214da64-9a63-4996-bc20-214433fa6441
     """
-    # WARNING fv & type not used yet - both are assumed to be their defaults (0)
+    # WARNING fv & type not used yet - both are assumed to be their
+    #         defaults (0)
     # fv = args[3]
     # type = args[4]
 
@@ -73,7 +80,11 @@ def PMT(
 
 
 @xl.register()
-def SLN(cost: xl.Number, salvage: xl.Number, life: xl.Number):
+def SLN(
+        cost: xltypes.XlNumber,
+        salvage: xltypes.XlNumber,
+        life: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Returns the straight-line depreciation of an asset for one period.
 
     https://support.office.com/en-us/article/
@@ -85,14 +96,14 @@ def SLN(cost: xl.Number, salvage: xl.Number, life: xl.Number):
 @xl.register()
 @xl.validate_args
 def VDB(
-        cost: xl.Number,
-        salvage: xl.Number,
-        life: xl.Number,
-        start_period: xl.Number,
-        end_period: xl.Number,
-        factor: xl.Number = 2,
-        no_switch: xl.Number = False
-):
+        cost: xltypes.XlNumber,
+        salvage: xltypes.XlNumber,
+        life: xltypes.XlNumber,
+        start_period: xltypes.XlNumber,
+        end_period: xltypes.XlNumber,
+        factor: xltypes.XlNumber = 2,
+        no_switch: xltypes.XlBoolean = False
+) -> xltypes.XlNumber:
     """Returns the depreciation of an asset for any period you specify.
 
     https://support.office.com/en-us/article/
@@ -125,7 +136,7 @@ def VDB(
 
     for index, current_year in enumerate(periods):
 
-        if not no_switch: # no_switch = False (Default Case)
+        if not no_switch:  # no_switch = False (Default Case)
             if switch_to_sln:
                 depr = sln_depr
 
@@ -140,8 +151,8 @@ def VDB(
                     fixed_remaining_years = life - current_year - 1
                     fixed_remaining_cost = cost - acc_depr
 
-                     # We need to check future sln: current depr should never
-                     # be smaller than sln to come.
+                    # We need to check future sln: current depr should never
+                    # be smaller than sln to come.
                     sln_depr = SLN(
                         fixed_remaining_cost, salvage, fixed_remaining_years)
 
@@ -160,7 +171,7 @@ def VDB(
                         depr = sln_depr
                         acc_depr += depr
 
-        else: # no_switch = True
+        else:  # no_switch = True
             depr = (cost - acc_depr) * depr_rate
             acc_depr += depr
 
@@ -183,19 +194,24 @@ def VDB(
 
 
 @xl.register()
-def XNPV(rate: xl.Number, values: xl.Range, dates: xl.Range):
+@xl.validate_args
+def XNPV(
+        rate: xltypes.XlNumber,
+        values: xltypes.XlArray,
+        dates: xltypes.XlArray,
+) -> xltypes.XlNumber:
     """Returns the net present value for a schedule of cash flows that
     is not necessarily periodic.
 
     https://support.microsoft.com/en-us/office/
         xnpv-function-1b42bbf6-370f-4532-a0eb-d67c16b664b7
     """
-    values = xl.flatten(values)
-    dates = xl.flatten(dates)
+    values = values.flatten(xltypes.Number, None)
+    dates = dates.flatten(xltypes.DateTime, None)
 
     # TODO: Ignore non numeric cells and boolean cells.
     if len(values) != len(dates):
-        return xl.NumExcelError(
+        return xlerrors.NumExcelError(
             f'`values` range must be the same length as `dates` range '
             f'in XNPV, {len(values)} != {len(dates)}')
 
