@@ -1,6 +1,6 @@
 import unittest
 
-from xlfunctions import lookup, xl, xlerrors, xltypes
+from xlfunctions import lookup, xlerrors, xltypes
 
 
 class LookupModuleTest(unittest.TestCase):

@@ -25,7 +25,6 @@ def parse_criteria(criteria):
             operator = CRITERIA_OPERATORS['=']
             str_value = criteria
 
-        str_value = xltypes.Text(str_value)
         value = str_value
         for XlType in (xltypes.Number, xltypes.DateTime, xltypes.Boolean):
             try:

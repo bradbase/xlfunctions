@@ -26,10 +26,12 @@ class TextModuleTest(unittest.TestCase):
         self.assertEqual(text.MID('Romain', 1, 2.1), 'Ro')
 
     def test_MID_start_num_must_be_superior_or_equal_to_1(self):
-        self.assertIsInstance(text.MID('Romain', 0, 3), xlerrors.NumExcelError)
+        self.assertIsInstance(
+            text.MID('Romain', 0, 3), xlerrors.NumExcelError)
 
     def test_MID_num_chars_must_be_positive(self):
-        self.assertIsInstance(text.MID('Romain', 1, -1), xlerrors.NumExcelError)
+        self.assertIsInstance(
+            text.MID('Romain', 1, -1), xlerrors.NumExcelError)
 
     def test_MID_with_too_large_text(self):
         self.assertIsInstance(

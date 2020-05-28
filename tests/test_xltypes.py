@@ -1,8 +1,7 @@
 import datetime
-import math
 import unittest
 
-from xlfunctions import utils, xl, xlerrors, xltypes
+from xlfunctions import utils, xlerrors, xltypes
 
 
 class ExcelTypeTest(unittest.TestCase):
@@ -361,6 +360,11 @@ class TextTest(AbstractExcelTypeTest, unittest.TestCase):
         boolean = xltypes.Text('true').__Boolean__()
         self.assertIsInstance(boolean, xltypes.Boolean)
         self.assertEqual(boolean.value, True)
+        self.assertEqual(xltypes.Text('TRUE').__Boolean__().value, True)
+        self.assertEqual(xltypes.Text('True').__Boolean__().value, True)
+        self.assertEqual(xltypes.Text('False').__Boolean__().value, False)
+        with self.assertRaises(xlerrors.ValueExcelError):
+            self.assertEqual(xltypes.Text('').__Boolean__().value, False)
 
     def test__Blank__(self):
         blank = self.value1.__Blank__()
@@ -386,10 +390,6 @@ class BooleanTest(AbstractExcelTypeTest, unittest.TestCase):
     num2 = 1
     text2 = xltypes.Text('True')
     bool2 = xltypes.Boolean(True)
-
-    def test__add__with_Text(self):
-        with self.assertRaises(xlerrors.ValueExcelError):
-            self.value1 + self.text2
 
     def test__lt__(self):
         res = self.value_zero < self.value1
@@ -526,16 +526,16 @@ class BlankTest(unittest.TestCase):
         self.assertEqual((xltypes.BLANK == 0).value, True)
         self.assertEqual((xltypes.BLANK == 'data').value, False)
         self.assertEqual((xltypes.BLANK == '').value, True)
-        self.assertEqual((xltypes.BLANK == True).value, False)
-        self.assertEqual((xltypes.BLANK == False).value, True)
+        self.assertEqual((xltypes.BLANK == True).value, False)    # noqa
+        self.assertEqual((xltypes.BLANK == False).value, True)  # noqa
 
     def test__ne__(self):
         self.assertEqual((xltypes.BLANK != 1).value, True)
         self.assertEqual((xltypes.BLANK != 0).value, False)
         self.assertEqual((xltypes.BLANK != 'data').value, True)
         self.assertEqual((xltypes.BLANK != '').value, False)
-        self.assertEqual((xltypes.BLANK != True).value, True)
-        self.assertEqual((xltypes.BLANK != False).value, False)
+        self.assertEqual((xltypes.BLANK != True).value, True)  # noqa
+        self.assertEqual((xltypes.BLANK != False).value, False)  # noqa
 
     def test__gt__(self):
         self.assertEqual((xltypes.BLANK > 1).value, False)

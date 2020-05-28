@@ -12,7 +12,8 @@ class OperatorModuleTest(unittest.TestCase):
         self.assertEqual(operator.OP_DIV(2, 1), 2)
 
     def test_OP_DIV_by_zero(self):
-        self.assertIsInstance(operator.OP_DIV(2, 0), xlerrors.DivZeroExcelError)
+        self.assertIsInstance(
+            operator.OP_DIV(2, 0), xlerrors.DivZeroExcelError)
 
     def test_OP_ADD(self):
         self.assertEqual(operator.OP_ADD(1, 2), 3)

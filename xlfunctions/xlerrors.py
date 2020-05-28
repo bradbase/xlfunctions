@@ -17,6 +17,13 @@ ERROR_CODES = (
     ERROR_CODE_NA,
 )
 
+ERRORS_BY_CODE = {}
+
+
+def register(cls):
+    ERRORS_BY_CODE[cls.value] = cls
+    return cls
+
 
 class ExcelError(Exception):
 
@@ -45,29 +52,36 @@ class SpecificExcelError(ExcelError):
         super().__init__(self.value, info)
 
 
+@register
 class NullExcelError(SpecificExcelError):
     value = ERROR_CODE_NULL
 
 
+@register
 class DivZeroExcelError(SpecificExcelError):
     value = ERROR_CODE_DIV_ZERO
 
 
+@register
 class ValueExcelError(SpecificExcelError):
     value = ERROR_CODE_VALUE
 
 
+@register
 class RefExcelError(SpecificExcelError):
     value = ERROR_CODE_REF
 
 
+@register
 class NameExcelError(SpecificExcelError):
     value = ERROR_CODE_NAME
 
 
+@register
 class NumExcelError(SpecificExcelError):
     value = ERROR_CODE_NUM
 
 
+@register
 class NaExcelError(SpecificExcelError):
     value = ERROR_CODE_NA

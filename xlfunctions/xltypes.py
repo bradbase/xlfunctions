@@ -46,6 +46,8 @@ class ExcelType:
 
     @classmethod
     def cast_from_native(cls, value):
+        if isinstance(value, xlerrors.ExcelError):
+            return value
         if isinstance(value, tuple(NATIVE_TO_XLTYPE.values())):
             return value
         return NATIVE_TO_XLTYPE[type(value)](value)
@@ -230,8 +232,8 @@ class Text(ExcelType):
             f'Could not convert {repr(self.value)} to float.')
 
     def __bool__(self, by_content_only=False):
-        if self.value in self.boolean_texts:
-            return (self.value == 'true')
+        if self.value.lower() in self.boolean_texts:
+            return (self.value.lower() == 'true')
         if by_content_only:
             raise xlerrors.ValueExcelError(
                 f'Could not convert {repr(self.value)} to bool.')
@@ -381,9 +383,9 @@ class Array(pandas.DataFrame):
 
     native_types = (list, tuple)
 
-    def __init__(self, data):
+    def __init__(self, data, *args, **kw):
         try:
-            super().__init__(_convert_nested_list(data))
+            super().__init__(_convert_nested_list(data), *args, **kw)
         except ValueError:
             raise xlerrors.ValueExcelError(f'Invalid array argument: {data}')
 
@@ -404,9 +406,8 @@ class Array(pandas.DataFrame):
         return Array(value)
 
     def flatten(self, xltype=None, filt=None):
-        cast = lambda x: x
-        if xltype is not None:
-            cast = _safe_cast(Number.cast, None)
+        cast = _safe_cast(Number.cast, None) \
+            if xltype is not None else lambda x: x
         return list(filter(filt, [cast(item) for item in self.values.flat]))
 
     def cast_to_numbers(self):

@@ -1,5 +1,3 @@
-from typing import Union
-
 from . import xl, xlerrors, xltypes
 
 
@@ -19,7 +17,7 @@ def OP_DIV(
         right: xltypes.XlAnything
 ) -> xltypes.XlNumber:
     if right == 0:
-        return xlerrors.DivZeroExcelError()
+        raise xlerrors.DivZeroExcelError()
     return left / right
 
 

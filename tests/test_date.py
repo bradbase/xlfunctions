@@ -2,7 +2,7 @@ import datetime
 import mock
 import unittest
 
-from xlfunctions import date, xl, xlerrors
+from xlfunctions import date, xlerrors
 
 dt = datetime.datetime
 
@@ -59,10 +59,12 @@ class DateModuleTest(unittest.TestCase):
             self.assertEqual(date.TODAY(), dt(2000, 1, 1))
 
     def test_YEARFRAC_start_date_must_be_datetime(self):
-        self.assertIsInstance(date.YEARFRAC('bad', 1), xlerrors.ValueExcelError)
+        self.assertIsInstance(
+            date.YEARFRAC('bad', 1), xlerrors.ValueExcelError)
 
     def test_YEARFRAC_end_date_must_be_datetime(self):
-        self.assertIsInstance(date.YEARFRAC(1, 'bad'), xlerrors.ValueExcelError)
+        self.assertIsInstance(
+            date.YEARFRAC(1, 'bad'), xlerrors.ValueExcelError)
 
     def test_YEARFRAC_start_date_must_after_epoch(self):
         self.assertIsInstance(
@@ -73,8 +75,10 @@ class DateModuleTest(unittest.TestCase):
             date.YEARFRAC(dt(1900, 1, 1), -1), xlerrors.ValueExcelError)
 
     def test_YEARFRAC_basis_must_be_between_0_and_4(self):
-        self.assertIsInstance(date.YEARFRAC(1, 2, 5), xlerrors.ValueExcelError)
-        self.assertIsInstance(date.YEARFRAC(1, 2, -1), xlerrors.ValueExcelError)
+        self.assertIsInstance(
+            date.YEARFRAC(1, 2, 5), xlerrors.ValueExcelError)
+        self.assertIsInstance(
+            date.YEARFRAC(1, 2, -1), xlerrors.ValueExcelError)
 
     def test_YEARFRAC_yearfrac_basis_0(self):
         # From Excel docs.

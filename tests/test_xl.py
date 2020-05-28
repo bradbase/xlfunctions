@@ -78,6 +78,8 @@ class XlModuleTest(unittest.TestCase):
             return arg
 
         self.assertIsInstance(func('bad'), xlerrors.ValueExcelError)
+        self.assertIsInstance(
+            func(xlerrors.ValueExcelError()), xlerrors.ValueExcelError)
 
     def test_validate_args_with_list(self):
 

@@ -1,6 +1,6 @@
 import unittest
 
-from xlfunctions import xl, xlerrors, xltypes, statistics
+from xlfunctions import xlerrors, xltypes, statistics
 
 
 class StatisticsModuleTest(unittest.TestCase):

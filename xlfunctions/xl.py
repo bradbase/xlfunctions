@@ -1,4 +1,3 @@
-import datetime
 import functools
 import inspect
 import typing
@@ -56,7 +55,8 @@ def _validate(vtype, val, name):
         itype = vtype.__args__[0]
         if itype != xltypes.XlArray:
             val = flatten(val)
-        return tuple(filter(lambda x: x is not None,
+        return tuple(filter(
+            lambda x: x is not None,
             [_safe_validate(itype, item, name) for item in val]
         ))
 
@@ -87,6 +87,8 @@ def validate_args(func):
         bound = sig.bind(*args, **kw)
         # 1. Convert all input parameters to Excel Types.
         for pname, value in list(bound.arguments.items()):
+            if isinstance(value, xlerrors.ExcelError):
+                return value
             try:
                 bound.arguments[pname] = _validate(
                     sig.parameters[pname].annotation, value, pname)
@@ -100,7 +102,7 @@ def validate_args(func):
             # value.
             return err
         # 3. Convert the result to an Excel type.
-        return res
+        return _validate(sig.return_annotation, res, 'return')
 
     return validate
 

@@ -131,7 +131,7 @@ def SQRT(
         sqrt-function-654975c2-05c4-4831-9a24-2c65e4040fdf
     """
     if number < 0:
-        return xlerrors.NumExcelError(f'number {number} must be non-negative')
+        raise xlerrors.NumExcelError(f'number {number} must be non-negative')
 
     return math.sqrt(number)
 
@@ -196,7 +196,7 @@ def SUMPRODUCT(
         sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e
     """
     if len(arrays) == 0:
-        return xlerrors.NullExcelError('Not enough arguments for function.')
+        raise xlerrors.NullExcelError('Not enough arguments for function.')
 
     array1_shape = arrays[0].shape
     if array1_shape == (0, 0):
@@ -205,11 +205,11 @@ def SUMPRODUCT(
     for array in arrays:
         array_shape = array.shape
         if array1_shape != array_shape:
-            return xlerrors.ValueExcelError(
+            raise xlerrors.ValueExcelError(
                 f"The shapes of the arrays do not match. Looking "
                 f"for {array1_shape} but given array has {array_shape}")
         if any(filter(xlerrors.ExcelError.is_error, xl.flatten(array))):
-            return xlerrors.NaExcelError(
+            raise xlerrors.NaExcelError(
                 "Excel Errors are present in the sumproduct items.")
 
     sumproduct = pandas.concat(arrays, axis=1)

@@ -36,7 +36,7 @@ def NPV(
         npv-function-8672cb67-2576-4d07-b67b-ac28acf2a568
     """
     if not len(values):
-        return xlerrors.ValueExcelError('value1 is required')
+        raise xlerrors.ValueExcelError('value1 is required')
 
     cashflow = [float(value) for value in values]
     rate = float(rate)
@@ -73,10 +73,12 @@ def PMT(
         when = 'end'
         if type != 0:
             when = 'begin'
-        return numpy_financial.pmt(rate, nper, pv, fv=0, when=when)
+        return numpy_financial.pmt(
+            float(rate), float(nper), float(pv), fv=0, when=when)
 
     # return -pv * rate / (1 - power(1 + rate, -nper))
-    return numpy_financial.pmt(rate, nper, pv, fv=0, when='end')
+    return numpy_financial.pmt(
+        float(rate), float(nper), float(pv), fv=0, when='end')
 
 
 @xl.register()
@@ -211,7 +213,7 @@ def XNPV(
 
     # TODO: Ignore non numeric cells and boolean cells.
     if len(values) != len(dates):
-        return xlerrors.NumExcelError(
+        raise xlerrors.NumExcelError(
             f'`values` range must be the same length as `dates` range '
             f'in XNPV, {len(values)} != {len(dates)}')
 

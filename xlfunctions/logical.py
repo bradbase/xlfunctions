@@ -14,7 +14,7 @@ def AND(
         and-function-5f19b2e8-e1df-4408-897a-ce285a19e9d9
     """
     if not logicals:
-        return xlerrors.NullExcelError('logical1 is required')
+        raise xlerrors.NullExcelError('logical1 is required')
 
     # Use delayed evaluation to minimize th amount of valaues to evaluate.
     for logical in logicals:
@@ -39,7 +39,7 @@ def OR(
         or-function-7d17ad14-8700-4281-b308-00b131e22af0
     """
     if not logicals:
-        return xlerrors.NullExcelError('logical1 is required')
+        raise xlerrors.NullExcelError('logical1 is required')
 
     # Use delayed evaluation to minimize th amount of valaues to evaluate.
     for logical in logicals:

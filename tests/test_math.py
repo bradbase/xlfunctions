@@ -1,6 +1,6 @@
 import unittest
 
-from xlfunctions import math, xl, xlerrors, xltypes
+from xlfunctions import math, xlerrors, xltypes
 
 
 class DateModuleTest(unittest.TestCase):
