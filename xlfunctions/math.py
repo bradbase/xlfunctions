@@ -2,14 +2,16 @@ import decimal
 import math
 import numpy
 import pandas
-from typing import List, Union
+from typing import Tuple
 
-from . import xl
+from . import xl, xlerrors, xltypes, xlcriteria
 
 
 @xl.register()
 @xl.validate_args
-def ABS(number: xl.Number):
+def ABS(
+        number: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Find the absolute value of provided value.
 
     https://support.office.com/en-us/article/
@@ -20,7 +22,9 @@ def ABS(number: xl.Number):
 
 @xl.register()
 @xl.validate_args
-def LN(number: xl.Number):
+def LN(
+        number: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Returns the natural logarithm of a number.
 
     https://support.office.com/en-us/article/
@@ -31,7 +35,10 @@ def LN(number: xl.Number):
 
 @xl.register()
 @xl.validate_args
-def MOD(number: xl.Integer, divisor: xl.Integer):
+def MOD(
+        number: xltypes.XlNumber,
+        divisor: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Returns the remainder after number is divided by divisor.
 
     https://support.office.com/en-us/article/
@@ -41,7 +48,7 @@ def MOD(number: xl.Integer, divisor: xl.Integer):
 
 
 @xl.register()
-def PI():
+def PI() -> xltypes.XlNumber:
     """Returns the number 3.14159265358979, the mathematical constant pi.
 
     Accurate to 15 digits.
@@ -54,7 +61,10 @@ def PI():
 
 @xl.register()
 @xl.validate_args
-def POWER(number: xl.Number, power: xl.Number):
+def POWER(
+        number: xltypes.XlNumber,
+        power: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Returns the result of a number raised to a power.
 
     https://support.office.com/en-us/article/
@@ -66,8 +76,8 @@ def POWER(number: xl.Number, power: xl.Number):
 @xl.register()
 @xl.validate_args
 def ROUND(
-        number: xl.Number,
-        num_digits: xl.Integer = 0,
+        number: xltypes.XlNumber,
+        num_digits: xltypes.XlNumber = 0,
         _rounding=decimal.ROUND_HALF_UP
 ):
     """Rounding half up
@@ -78,13 +88,16 @@ def ROUND(
     number = decimal.Decimal(str(number))
     dc = decimal.getcontext()
     dc.rounding = _rounding
-    ans = round(number, num_digits)
+    ans = round(number, int(num_digits))
     return float(ans)
 
 
 @xl.register()
 @xl.validate_args
-def ROUNDUP(number: xl.Number, num_digits: xl.Integer = 0):
+def ROUNDUP(
+        number: xltypes.XlNumber,
+        num_digits: xltypes.XlNumber = 0
+) -> xltypes.XlNumber:
     """Round up
 
     https://support.office.com/en-us/article/
@@ -95,7 +108,10 @@ def ROUNDUP(number: xl.Number, num_digits: xl.Integer = 0):
 
 @xl.register()
 @xl.validate_args
-def ROUNDDOWN(number: xl.Number, num_digits: xl.Integer = 0):
+def ROUNDDOWN(
+        number: xltypes.XlNumber,
+        num_digits: xltypes.XlNumber = 0
+) -> xltypes.XlNumber:
     """Round down
 
     https://support.office.com/en-us/article/
@@ -106,20 +122,25 @@ def ROUNDDOWN(number: xl.Number, num_digits: xl.Integer = 0):
 
 @xl.register()
 @xl.validate_args
-def SQRT(number: xl.Number):
+def SQRT(
+        number: xltypes.XlNumber
+) -> xltypes.XlNumber:
     """Returns a positive square root.
 
     https://support.office.com/en-us/article/
         sqrt-function-654975c2-05c4-4831-9a24-2c65e4040fdf
     """
     if number < 0:
-        return xl.NumExcelError(f'number {number} must be non-negative')
+        raise xlerrors.NumExcelError(f'number {number} must be non-negative')
 
     return math.sqrt(number)
 
 
 @xl.register()
-def SUM(*numbers):
+@xl.validate_args
+def SUM(
+        *numbers: Tuple[xltypes.XlNumber]
+) -> xltypes.XlNumber:
     """The SUM function adds values.
 
     https://support.office.com/en-us/article/
@@ -129,12 +150,16 @@ def SUM(*numbers):
     if len(numbers) == 0:
         return 0
 
-    return sum(filter(xl.is_number, xl.flatten(numbers)))
+    return sum(numbers)
 
 
 @xl.register()
 @xl.validate_args
-def SUMIF(range: xl.Range, criteria, sum_range: xl.Range = None):
+def SUMIF(
+        range: xltypes.XlArray,
+        criteria: xltypes.XlAnything,
+        sum_range: xltypes.XlArray = None
+) -> xltypes.XlNumber:
     """Adds the cells specified by a given criteria.
 
     https://support.office.com/en-us/article/
@@ -143,16 +168,13 @@ def SUMIF(range: xl.Range, criteria, sum_range: xl.Range = None):
     # WARNING:
     # - wildcards not supported
 
-    if not xl.is_criteria(criteria):
-        return 0
-
-    check = xl.parse_criteria(criteria)
+    check = xlcriteria.parse_criteria(criteria)
 
     if sum_range is None:
         sum_range = range
 
-    range = xl.flatten(range)
-    sum_range = xl.flatten(sum_range)
+    range = range.flat
+    sum_range = sum_range.cast_to_numbers().flat
 
     # zip() will automatically drop any range values that have indexes larger
     # than sum_range's length.
@@ -165,36 +187,41 @@ def SUMIF(range: xl.Range, criteria, sum_range: xl.Range = None):
 
 @xl.register()
 @xl.validate_args
-def SUMPRODUCT(*ranges: List[xl.Range]):
-    """Returns the sum of the products of corresponding ranges or arrays.
+def SUMPRODUCT(
+        *arrays: Tuple[xltypes.XlArray]
+) -> xltypes.XlNumber:
+    """Returns the sum of the products of corresponding arrays or arrays.
 
     https://support.office.com/en-us/article/
         sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e
     """
-    if len(ranges) == 0:
-        return xl.NullExcelError('Not enough arguments for function.')
+    if len(arrays) == 0:
+        raise xlerrors.NullExcelError('Not enough arguments for function.')
 
-    range1_len = xl.length(ranges[0])
-    if range1_len == 0:
+    array1_shape = arrays[0].shape
+    if array1_shape == (0, 0):
         return 0
 
-    for range in ranges:
-        range_len = xl.length(range)
-        if range1_len != range_len:
-            return xl.ValueExcelError(
-                f"The length of the ranges does not match. Looking "
-                f"for {range1_len} but given range has length {range_len}")
-        if any(filter(xl.is_error, xl.flatten(range))):
-            return xl.NaExcelError(
+    for array in arrays:
+        array_shape = array.shape
+        if array1_shape != array_shape:
+            raise xlerrors.ValueExcelError(
+                f"The shapes of the arrays do not match. Looking "
+                f"for {array1_shape} but given array has {array_shape}")
+        if any(filter(xlerrors.ExcelError.is_error, xl.flatten(array))):
+            raise xlerrors.NaExcelError(
                 "Excel Errors are present in the sumproduct items.")
 
-    sumproduct = pandas.concat(ranges, axis=1)
+    sumproduct = pandas.concat(arrays, axis=1)
     return sumproduct.prod(axis=1).sum()
 
 
 @xl.register()
 @xl.validate_args
-def TRUNC(number: xl.Number, num_digits: xl.Integer = 0):
+def TRUNC(
+        number: xltypes.XlNumber,
+        num_digits: xltypes.XlNumber = 0
+) -> xltypes.XlNumber:
     """Truncate a number to the specified number of digits.
 
     https://support.office.com/en-us/article/
@@ -204,5 +231,7 @@ def TRUNC(number: xl.Number, num_digits: xl.Integer = 0):
     # case.
     if num_digits == 0:
         return math.trunc(number)
+
+    num_digits = int(num_digits)
 
     return math.trunc(number * 10**num_digits) / 10**num_digits
