@@ -15,10 +15,8 @@ def IRR(
     https://support.office.com/en-us/article/
         irr-function-64925eaa-9988-495b-b290-3ad0c163c1bc
     """
-    if guess is not None and guess != 0:
-        raise NotImplementedError(
-            '"guess" value for IRR() is {guess} and not 0')
-
+    # `guess` is not used, but unnecessary, since it is a pure perforamnce
+    # optimization.
     return numpy_financial.irr(xl.flatten(values))
 
 
@@ -55,7 +53,7 @@ def PMT(
         rate: xltypes.XlNumber,
         nper: xltypes.XlNumber,
         pv: xltypes.XlNumber,
-        fv: xltypes.XlNumber = None,
+        fv: xltypes.XlNumber = 0,
         type: xltypes.XlNumber = 0
 ) -> xltypes.XlNumber:
     """Calculates the payment for a loan based on constant payments and
@@ -74,11 +72,11 @@ def PMT(
         if type != 0:
             when = 'begin'
         return numpy_financial.pmt(
-            float(rate), float(nper), float(pv), fv=0, when=when)
+            float(rate), float(nper), float(pv), fv=fv, when=when)
 
     # return -pv * rate / (1 - power(1 + rate, -nper))
     return numpy_financial.pmt(
-        float(rate), float(nper), float(pv), fv=0, when='end')
+        float(rate), float(nper), float(pv), fv=fv, when='end')
 
 
 @xl.register()

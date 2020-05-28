@@ -11,8 +11,9 @@ class FinancialModuleTest(unittest.TestCase):
             financial.IRR(xltypes.Array([[-100, 39, 59, 55, 20]])), 0.2809484)
 
     def test_IRR_with_guess_non_null(self):
-        with self.assertRaises(NotImplementedError):
-            financial.IRR(xltypes.Array([[-100, 39, 59]]), 2)
+        self.assertAlmostEqual(
+            financial.IRR(xltypes.Array([[-100, 39, 59, 55, 20]]), 1),
+            0.2809484)
 
     def test_NPV(self):
         self.assertAlmostEqual(
