@@ -3,7 +3,7 @@ CHANGES
 =======
 
 
-0.2.1 (unreleased)
+0.2.1 (2020-05-28)
 ------------------
 
 - Fix an error message to refer to the righ type.
