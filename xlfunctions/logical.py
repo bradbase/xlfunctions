@@ -59,7 +59,7 @@ def IF(
         logical_test: xltypes.XlExpr,
         value_if_true: xltypes.XlExpr = True,
         value_if_false: xltypes.XlExpr = False
-) -> xltypes.XlAnything:
+):
     """Return one value if a condition is true and another value if it's false.
 
     https://support.office.com/en-us/article/

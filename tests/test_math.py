@@ -92,6 +92,11 @@ class DateModuleTest(unittest.TestCase):
 
     def test_SUM_with_nonnumbers_in_range(self):
         self.assertEqual(math.SUM(xltypes.Array([[1, 'bad'], [3, 4]])), 8)
+        self.assertEqual(math.SUM(
+            xltypes.Array([
+                [xltypes.Number(1), xltypes.Text('N/A')],
+                [xltypes.Number(3), xltypes.Number(4)]
+            ])), 8)
 
     def test_SUM_with_bad_Arg(self):
         self.assertEqual(math.SUM('foo'), 0)

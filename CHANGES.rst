@@ -6,7 +6,9 @@ CHANGES
 0.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix an error message to refer to the righ type.
+
+- Added a test to ensure SUM() works with arrays containing Excel data types.
 
 
 0.2.0 (2020-05-28)

@@ -118,7 +118,7 @@ class ExcelType:
             return int(float(self.value))
         except ValueError:
             raise xlerrors.ValueExcelError(
-                f'Could not convert {repr(self.value)} to float.')
+                f'Could not convert {repr(self.value)} to int.')
 
     def __float__(self):
         try:
