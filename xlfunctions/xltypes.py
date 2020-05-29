@@ -181,6 +181,15 @@ class Number(ExcelType):
 
     __rmod__ = __mod__
 
+    def __neg__(self):
+        return Number(self.value.__neg__())
+
+    def __pos__(self):
+        return Number(self.value.__pos__())
+
+    def __invert__(self):
+        return Number(-self.value)
+
     def __abs__(self):
         return Number(self.value.__abs__())
 

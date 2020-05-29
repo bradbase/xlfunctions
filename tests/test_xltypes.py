@@ -1,4 +1,5 @@
 import datetime
+import operator
 import unittest
 
 from xlfunctions import utils, xlerrors, xltypes
@@ -246,6 +247,21 @@ class NumberTest(AbstractExcelTypeTest, unittest.TestCase):
     def test_is_decimal(self):
         self.assertEqual(xltypes.Number(1).is_decimal, False)
         self.assertEqual(xltypes.Number(1.0).is_decimal, True)
+
+    def test__neg__(self):
+        res = -xltypes.Number(2.0)
+        self.assertIsInstance(res.value, float)
+        self.assertEqual(res.value, -2.0)
+
+    def test__pos__(self):
+        res = +xltypes.Number(-2.0)
+        self.assertIsInstance(res.value, float)
+        self.assertEqual(res.value, -2.0)
+
+    def test__invert__(self):
+        res = operator.invert(xltypes.Number(2.0))
+        self.assertIsInstance(res.value, float)
+        self.assertEqual(res.value, -2.0)
 
     def test__add__with_decimal_number(self):
         res = xltypes.Number(1) + xltypes.Number(2.0)

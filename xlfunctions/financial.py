@@ -71,12 +71,12 @@ def PMT(
         when = 'end'
         if type != 0:
             when = 'begin'
-        return numpy_financial.pmt(
-            float(rate), float(nper), float(pv), fv=fv, when=when)
+        return float(numpy_financial.pmt(
+            float(rate), float(nper), float(pv), fv=float(fv), when=when))
 
     # return -pv * rate / (1 - power(1 + rate, -nper))
-    return numpy_financial.pmt(
-        float(rate), float(nper), float(pv), fv=fv, when='end')
+    return float(numpy_financial.pmt(
+        float(rate), float(nper), float(pv), fv=float(fv), when='end'))
 
 
 @xl.register()

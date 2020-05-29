@@ -6,7 +6,7 @@ CHANGES
 0.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Implement a few more operators for the Excel Number type.
 
 
 0.2.1 (2020-05-28)
