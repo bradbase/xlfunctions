@@ -3,7 +3,7 @@ CHANGES
 =======
 
 
-0.2.2 (unreleased)
+0.2.2 (2020-05-28)
 ------------------
 
 - Implement a few more operators for the Excel Number type.
