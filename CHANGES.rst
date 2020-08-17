@@ -6,7 +6,7 @@ CHANGES
 0.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Retired this project. Is now part of xlcalculator
 
 
 0.2.2 (2020-05-28)
