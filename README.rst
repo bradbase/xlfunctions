@@ -19,9 +19,10 @@ XLFunctions
     :alt: Package stability
 
 
-.. warning:: xlfunctions are now part of xlcalculator and so this project is considered retired.
+.. DANGER::
+  xlfunctions are now part of xlcalculator and so this project is considered retired.
 
-    I do not expect to maintain this project. 2020-08-17
+  I do not expect to maintain this project. 2020-08-17
 
 
 
