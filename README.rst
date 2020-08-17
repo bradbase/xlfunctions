@@ -18,6 +18,14 @@ XLFunctions
     :target: https://pypi.org/project/xlfunctions/
     :alt: Package stability
 
+
+.. warning:
+    xlfunctions are now part of xlcalculator and so this project is considered retired.
+
+    I do not expect to maintain this project. 2020-08-17
+
+
+
 A collection of classes which implement functions as used in Microsoft
 Excel. The intent is to be a definitive library to support evaluating Excel
 calculations.
